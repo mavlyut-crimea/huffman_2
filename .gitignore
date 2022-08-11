@@ -1,0 +1,29 @@
+# IDE
+*.user
+.idea
+*.cbp
+
+# Google tests
+googletest-build/
+googletest-download/
+googletest-src/
+lib/
+
+# Cmake
+CMakeCache.txt
+CMakeFiles/
+cmake-build*
+cmake_install.cmake
+Makefile
+
+# vcpkg
+vcpkg_installed/
+vcpkg-manifest-install.log
+
+# python
+**/__pycache__/
+.pytest_cache/
+
+# integration tests data
+integration-tests/data/basov.pdf
+integration-tests/data/buggati.jpg
