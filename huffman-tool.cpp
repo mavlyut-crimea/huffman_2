@@ -38,18 +38,18 @@ struct parser_keys {
   parser_keys(flags_container flags) : flags(std::move(flags)) {}
 
   bool exist(char const fl) const {
-    return keys.contains(fl);
+    return keys.find(fl) != keys.end();
   }
 
   void push(char x) {
-    if (!flags.contains(x) || x == '\0') {
+    if (flags.find(x) != flags.end() || x == '\0') {
       throw unsupported_option_exception("-" + std::string(1, x));
     }
     keys.insert(x);
   }
 
   void push(std::string const& k) {
-    if (k.starts_with("--")) {
+    if (k.substr(0, std::min<size_t>(2, k.length())) == "--") {
       char tmp = long_to_short(flags, k.substr(2));
       if (tmp == '\0') {
         throw unsupported_option_exception(k);
