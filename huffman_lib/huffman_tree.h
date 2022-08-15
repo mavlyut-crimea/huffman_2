@@ -49,7 +49,9 @@ const int DEFAULT_SMALL_SIZE = 416;
 
 // TODO: I haven't calculate optimal SMALL_SIZE yet, so why won't it be 416
 template <typename code_t = huffman_code_type_examples::ct_default,
-    size_t SMALL_SIZE = DEFAULT_SMALL_SIZE> requires Is_Code_t<code_t>
+    size_t SMALL_SIZE = DEFAULT_SMALL_SIZE,
+    typename std::enable_if_t<std::is_base_of_v<huffman_code_type, code_t>
+                              && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
 struct tree {
   tree() : cnt_used(0), root(new node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(huffman)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(GTest REQUIRED)
 
@@ -41,8 +41,8 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 #  target_compile_options(tests PUBLIC -stdlib=libc++)
-  target_compile_options(tests PUBLIC -std=c++2a)
-  target_compile_options(huffman-tool PUBLIC -std=c++2a)
+  target_compile_options(tests PUBLIC -std=c++17)
+  target_compile_options(huffman-tool PUBLIC -std=c++17)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")

@@ -7,7 +7,6 @@
 
 #include <ostream>
 #include <vector>
-#include <concepts>
 
 #include "bstream.h"
 
@@ -26,10 +25,6 @@ struct huffman_code_type {
   void print(obstream&) const;
   virtual bool operator[](size_t) const = 0;
 };
-
-template <typename T>
-concept Is_Code_t = std::is_base_of<huffman_code_type, T>::value
-    && !std::is_same<huffman_code_type, T>::value;
 
 std::basic_ostream<char>& operator<<(std::basic_ostream<char>&, huffman_code_type const&);
 obstream& operator<<(obstream&, huffman_code_type const&);
@@ -61,8 +56,8 @@ namespace huffman_code_type_examples {
     std::vector<bool> _vec;
   };
 
-  template <typename _int_type = uint8_t>
-  requires std::is_integral<_int_type>::value
+  template <typename _int_type = uint8_t,
+      typename std::enable_if_t<std::is_integral<_int_type>::value, void*> = nullptr>
   struct ct_vector_ints : huffman_code_type {
     ct_vector_ints() : pos_end(_bitness) {}
 
