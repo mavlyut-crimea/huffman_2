@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
     ASSERT_TRUE(fin1.eof() && fin2.eof());  \
 }
 
-const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
+const std::string path = ".";
 
 template <typename T>
 void htest(char const* input, bool log = true) {
