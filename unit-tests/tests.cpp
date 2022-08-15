@@ -34,6 +34,7 @@ const std::string path = std::string(std::filesystem::current_path()) + "/../uni
 
 template <typename T>
 void htest(char const* input, bool log = true) {
+  std::cout << path << "\n";
   std::string name_of_type(typeid(T).name());
   std::cout << name_of_type << "_" << input << "_Test\n";
   std::string in = path + "/files/" + input;
