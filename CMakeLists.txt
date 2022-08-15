@@ -41,8 +41,8 @@ endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 #  target_compile_options(tests PUBLIC -stdlib=libc++)
-  target_compile_options(tests PUBLIC -std=c++2a -fconcepts)
-  target_compile_options(huffman-tool PUBLIC -std=c++2a -fconcepts)
+  target_compile_options(tests PUBLIC -std=c++2a)
+  target_compile_options(huffman-tool PUBLIC -std=c++2a)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
