@@ -10,27 +10,19 @@
 #include <fstream>
 #include <filesystem>
 
-/*template <typename code_t = ct_default> requires Is_Code_t<code_t>
-std::pair<code_t&, tree<code_t>&> encode(std::string const& str) {
-  std::vector<weight_t> weights(MAX_SIZE, 0);
-  tree tr(weights);
-  for (char tmp_char : str) {
-    weights[to_char_t(tmp_char)]++;
+static void check_stream(std::basic_ios<char> const& stream) {
+  if (!stream.good()) {
+    throw std::runtime_error("I/O error while opening stream\n");
   }
-  tr.build_tree();
-  code_t ans;
-  for (char tmp_char : str) {
-    ans.push(tr.get_code(to_char_t(tmp_char)));
-  }
-  return {ans, tr};
-}*/
+}
 
 template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
-void encode(char const* in, std::basic_ostream<char>& fout = std::cout) {
+void encode(char const* in, std::basic_ostream<char>& fout) {
   std::ifstream fin;
   fin.open(in, std::fstream::in);
   fin >> std::noskipws;
+  check_stream(fin);
   tree<code_t> tr;
   char tmp_char;
   while (fin >> tmp_char) {
@@ -42,7 +34,10 @@ void encode(char const* in, std::basic_ostream<char>& fout = std::cout) {
     return;
   }
   if (tr.get_cnt_used() == 1) {
-    fout << "-3\n";
+#ifdef LOG
+    std::cout << "mode: " << MODES::ONE_CHAR << '\n';
+#endif
+    fout << MODES::ONE_CHAR << '\n';
     for (size_t i = 0; i < MAX_SIZE; i++) {
       if (tr.get_count(i)) {
         fout << from_char_t(i) << tr.get_count(i);
@@ -54,6 +49,7 @@ void encode(char const* in, std::basic_ostream<char>& fout = std::cout) {
   tr.build_tree();
   fin.open(in, std::fstream::in);
   fin >> std::noskipws;
+  check_stream(fin);
   if (tr.need_to_compress(std::filesystem::file_size(in))) {
     fout << tr;
     obstream bout = fout;
@@ -62,7 +58,10 @@ void encode(char const* in, std::basic_ostream<char>& fout = std::cout) {
     }
     bout.flush();
   } else {
-    fout << "-2\n";
+#ifdef LOG
+    std::cout << "mode: " << MODES::ORIG << '\n';
+#endif
+    fout << MODES::ORIG << '\n';
     while (fin >> tmp_char) {
       fout << tmp_char;
     }
@@ -74,8 +73,18 @@ template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
 void encode(char const* in, char const* out) {
   std::ofstream fout(out, std::fstream::out);
+  check_stream(fout);
   encode<code_t>(in, fout);
   fout.close();
+}
+
+template <typename code_t = huffman_code_type_examples::ct_default>
+  requires Is_Code_t<code_t>
+std::string encode(std::string const& str) {
+  std::stringstream sin(str);
+  std::stringstream sout(str);
+  encode<code_t>(sin, sout);
+  return sout.str();
 }
 
 /*template <typename code_t = huffman_code_type_examples::ct_default>
@@ -101,7 +110,7 @@ static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
   for (size_t i = 0; i < MAX_SIZE; i++) {
     bin >> len;
     std::string tmp = read_bin_string(bin, len, len);
-    tr.push(tmp, i);
+    tr.push(tmp, from_char_t(i));
 #ifdef LOG
     std::cout << from_char_t(i) << " " << tmp << "\n";
 #endif
@@ -126,33 +135,35 @@ static void read_used_codes(ibstream& bin, tree<code_t>& tr, size_t cnt) {
 
 template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
-void decode(std::basic_istream<char>& fin = std::cin,
+void decode(std::basic_istream<char>& fin,
             std::basic_ostream<char>& fout = std::cout) {
   tree<code_t> tr;
   ibstream bin = fin;
   char tmp;
-  int mode;
-  if (!(bin >> mode)) return;
-  if (mode == -2) {
+  int imode;
+  if (!(bin >> imode)) return;
+  MODES mode = to_mode(imode);
+#ifdef LOG
+  std::cout << imode << "\n";
+#endif
+  if (mode == MODES::ORIG) {
     while (fin >> tmp) {
       fout << tmp;
     }
     return;
-  }
-  if (mode == -3) {
-    fin >> tmp >> mode;
-    for (size_t i = 0; i < mode; i++) {
+  } else if (mode == MODES::ONE_CHAR) {
+    weight_t cnt;
+    fin >> tmp >> cnt;
+    for (size_t i = 0; i < cnt; i++) {
       fout << tmp;
     }
     return;
-  }
-  if (mode < -1 || mode > MAX_SIZE) {
-    throw std::runtime_error("File was broken: unknown mode " + std::to_string(mode));
-  }
-  if (mode == -1) {
+  } else if (mode == MODES::ALL) {
     read_all_codes(bin, tr);
+  } else if (mode == MODES::USED) {
+    read_used_codes(bin, tr, imode);
   } else {
-    read_used_codes(bin, tr, mode);
+    throw std::runtime_error("File was broken: unknown imode " + std::to_string(imode));
   }
   bool x;
   auto nd = tr.get_root();
@@ -161,8 +172,14 @@ void decode(std::basic_istream<char>& fin = std::cin,
 #ifdef LOG
     std::cout << x;
 #endif
+    if ((nd->right == nullptr) != (nd->left == nullptr)) {
+      std::cout << "error\n";
+    }
     nd = x ? nd->right : nd->left;
     if (nd->is_leaf()) {
+#ifdef LOG
+      std::cout << from_char_t(nd->value);
+#endif
       fout << from_char_t(nd->value);
       nd = tr.get_root();
     }
@@ -176,6 +193,7 @@ template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
 void decode(char const* in, std::basic_ostream<char>& fout = std::cout) {
   std::ifstream fin(in, std::fstream::in);
+  check_stream(fin);
   decode<code_t>(fin, fout);
   fin.close();
 }
@@ -184,6 +202,7 @@ template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
 void decode(std::basic_istream<char>* fin, char const* out) {
   std::ofstream fout(out, std::fstream::out);
+  check_stream(fout);
   decode<code_t>(fin, fout);
   fout.close();
 }
@@ -192,6 +211,7 @@ template <typename code_t = huffman_code_type_examples::ct_default>
 requires Is_Code_t<code_t>
 void decode(char const* in, char const* out) {
   std::ofstream fout(out, std::fstream::out);
+  check_stream(fout);
   decode<code_t>(in, fout);
   fout.close();
 }

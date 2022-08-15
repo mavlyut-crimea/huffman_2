@@ -17,7 +17,6 @@ struct ibstream {
   ibstream& operator>>(bool&);
   ibstream& operator>>(size_t&);
   ibstream& operator>>(int&);
-  std::basic_istream<char>& get_istream() const;
   explicit operator bool() const;
   bool operator!() const;
 
@@ -38,7 +37,6 @@ struct obstream {
 
   obstream& operator<<(bool);
   void flush(); // finish entering binary_string
-  std::basic_ostream<char>& get_ostream() const;
 
 private:
   size_t mod;

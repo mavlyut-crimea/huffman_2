@@ -17,6 +17,21 @@ constexpr size_t MAX_SIZE = 256;
 #define char_t unsigned char
 #define weight_t size_t
 
+enum MODES : int {
+  ORIG = -1,
+  ALL,
+  ONE_CHAR,
+  USED,
+  UNKNOWN = MAX_SIZE + 1
+};
+
+MODES to_mode(int x) {
+  if (x < -1) return UNKNOWN;
+  if (x < 2) return MODES{x};
+  if (x <= MAX_SIZE) return USED;
+  return UNKNOWN;
+}
+
 constexpr static char_t to_char_t(char x) {
   return static_cast<char_t>(static_cast<int>(x) + MAX_SIZE / 2);
 }
@@ -30,9 +45,11 @@ constexpr static size_t count_of_digits(size_t x) {
   return static_cast<size_t>(floor(log10(static_cast<double>(x)) + 1));
 }
 
+const int DEFAULT_SMALL_SIZE = 416;
+
 // TODO: I haven't calculate optimal SMALL_SIZE yet, so why won't it be 416
 template <typename code_t = huffman_code_type_examples::ct_default,
-    size_t SMALL_SIZE = 416> requires Is_Code_t<code_t>
+    size_t SMALL_SIZE = DEFAULT_SMALL_SIZE> requires Is_Code_t<code_t>
 struct tree {
   tree() : cnt_used(0), root(new node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),
@@ -56,10 +73,8 @@ struct tree {
 
   void build_tree() {
     std::priority_queue<node*, std::vector<node*>, comparator_nodes> q;
-    char_t last_used;
     for (weight_t i = 0; i < MAX_SIZE; i++) {
       if (weights[i]) {
-        last_used = i;
         q.push(new node(i, weights[i]));
       }
     }
@@ -70,20 +85,23 @@ struct tree {
       q.pop();
       q.push(new node(x, y));
     }
-    if (q.size()) root.left = q.top();
-    code_t tmp_code;
-    if (cnt_used != 1) {
-      put_codes(get_root(), tmp_code);
-    } else {
-      tmp_code.push_left_code();
-      codes[last_used] = tmp_code;
+    if (q.size()) {
+      root.left = q.top();
     }
+    code_t tmp_code;
+    put_codes(get_root(), tmp_code);
   }
 
   void push(std::string const& cd, char letter) {
+    if (letter == 't') {
+      int a = 5;
+    }
+    if (!cd.length()) {
+      return;
+    }
     node* tmp = get_root();
     size_t i = 0;
-    for (; i < cd.length() && !is_semi_leaf(tmp, cd[i] == '1'); i++) {
+    for (; i < cd.length() && !tmp->is_semi_leaf(cd[i] == '1'); i++) {
       tmp = (cd[i] == '1' ? tmp->right : tmp->left);
     }
     for (; i < cd.length() - 1; i++) {
@@ -100,9 +118,15 @@ struct tree {
     }
 #endif
 #ifdef _DCO
-    size_t tmp_size = 0, i = 0;
+    size_t tmp_size = 0, i = 0, pos = 0, len;
     while (i < MAX_SIZE) {
-      tmp_size += codes[i].size() * weights[i];
+      len = codes[i].size() * weights[i];
+      tmp_size += len / BLOCK_SIZE;
+      pos += len % BLOCK_SIZE;
+      if (pos > BLOCK_SIZE) {
+        tmp_size++;
+        pos = 0;
+      }
       i++;
       if (tmp_size > start_size) {
         return false;
@@ -115,11 +139,17 @@ struct tree {
   friend std::basic_ostream<char>&
   operator<<(std::basic_ostream<char>& out, tree<code_t> const& x) {
     if (x.a_mode_is_better()) {
-      out << "-1\n";
+#ifdef LOG
+      std::cout << "mode: " << MODES::ORIG << '\n';
+#endif
+      out << MODES::ALL << '\n';
       for (code_t const& i : x.codes) {
         out << i << '\n';
       }
     } else {
+#ifdef LOG
+      std::cout << "mode: u-" << x.cnt_used << '\n';
+#endif
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
         if (x.weights[i]) {
@@ -149,19 +179,9 @@ private: // structures
       return !left && !right;
     }
 
-    friend bool is_leaf(node const* x) {
-      if (!x) return true;
-      return x->is_leaf();
-    }
-
     bool is_semi_leaf(bool is_right) const {
       if (is_right) return !right;
       return !left;
-    }
-
-    friend bool is_semi_leaf(node const* x, bool is_right) {
-      if (!x) return true;
-      return x->is_semi_leaf(is_right);
     }
   };
 
@@ -186,6 +206,9 @@ private: // methods
   }
 
   void put_codes(node* tmp, code_t& tmp_code) {
+    if (!tmp) {
+      return;
+    }
     if (tmp->is_leaf()) {
       codes[tmp->value] = tmp_code;
       return;

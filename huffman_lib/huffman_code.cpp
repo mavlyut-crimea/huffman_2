@@ -5,45 +5,45 @@
 #include "huffman_code.h"
 #include <sstream>
 
-void huffman_code_type::push_code(bool is_right) {
-  if (is_right) {
-    push_right_code();
-  } else {
-    push_left_code();
-  }
-}
-
 std::basic_ostream<char>&
 operator<<(std::basic_ostream<char>& out, huffman_code_type const& a) {
   out << a.size();
   if (a.size()) {
     out << ' ';
-    a.print_optimized(out);
+    a.print(out);
   }
   return out;
 }
 
-std::string huffman_code_type::to_string() const {
-  std::stringstream ss;
-  print(ss);
-  return ss.str();
+void huffman_code_type::print(std::basic_ostream<char>& out) const {
+  size_t sz = size();
+  size_t end = sz / BLOCK_SIZE * BLOCK_SIZE;
+  char tmp;
+  for (size_t i = 0; i < end; i += BLOCK_SIZE) {
+    tmp = 0;
+    for (size_t j = 0; j < BLOCK_SIZE; j++) {
+      tmp <<= 1;
+      if (operator[](i + j)) tmp++;
+    }
+    out << tmp;
+  }
+  if (sz != end) {
+    tmp = 0;
+    for (size_t i = end; i < sz; i++) {
+      tmp <<= 1;
+      if (operator[](i)) tmp++;
+    }
+    out << tmp;
+  }
 }
 
-template <typename T>
-requires Is_Code_t<T>
-T& copy_from_string(std::string const& str) {
-  T ans;
-  for (char i : str) {
-    if (i == '1' || i == '0') {
-      ans.push_code(i == '1');
-    } else {
-      break;
-    }
+void huffman_code_type::print(obstream& bout) const {
+  for (size_t i = 0; i < size(); i++) {
+    bout << operator[](i);
   }
-  return ans;
 }
 
 obstream& operator<<(obstream& bout, huffman_code_type const& x) {
-  x.print_optimized(bout);
+  x.print(bout);
   return bout;
 }

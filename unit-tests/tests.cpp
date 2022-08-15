@@ -5,6 +5,20 @@
 
 using namespace huffman_code_type_examples;
 
+MODES get_mode_from_file(char const* name) {
+  std::ifstream fin(name);
+  int mode;
+  fin >> mode;
+  fin.close();
+  MODES ans = to_mode(mode);
+  if (ans == MODES::USED) return MODES{mode};
+  return ans;
+}
+
+std::ostream& operator<<(std::ostream& out, MODES x) {
+  return out << static_cast<int>(x);
+}
+
 #define ASSERT_EQ_FILES(in1, in2) {         \
     std::ifstream fin1(in1), fin2(in2);     \
     char tmp1, tmp2;                        \
@@ -16,41 +30,68 @@ using namespace huffman_code_type_examples;
     ASSERT_TRUE(fin1.eof() && fin2.eof());  \
 }
 
-const std::string path = "/home/mavlyut/CLionProjects/huffman-mavlyut/unit-tests";
-constexpr double eps = 1e-5;
+const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
 
-#define MY_TEST(code_t, input) TEST(code_t, input) {                           \
-  std::cout << test_info_->test_case_name()                                    \
-              << "_" << test_info_->name() << "_Test\n";                       \
-  std::string in = path + "/files/" + test_info_->name();                      \
-  std::string enc = path + "/enc_files/" + test_info_->name() + "_" + #code_t; \
-  std::string dec = path + "/dec_files/" + test_info_->name() + "_" + #code_t; \
-  time_t t1 = std::time(nullptr);                                              \
-  encode<code_t> (in.c_str(), enc.c_str());                                    \
-  time_t t2 = std::time(nullptr);                                              \
-  decode<code_t>(enc.c_str(), dec.c_str());                                    \
-  time_t t3 = std::time(nullptr);                                              \
-  size_t s1 = std::filesystem::file_size(in);                                  \
-  size_t s2 = std::filesystem::file_size(enc);                                 \
-  size_t s3 = std::filesystem::file_size(dec);                                 \
-  ASSERT_EQ(s1, s3);                                                           \
-  double coef = static_cast<double>(s1) / static_cast<double>(s2);             \
-  std::cout << "Start size: " << s1 << ", encoded_file size: " << s2           \
-            << ", compression ratio: " << coef << "\n";                        \
-  std::cout << "Encode time: " << t2 - t1 << "s\n";                            \
-  std::cout << "Decode time: " << t3 - t2 << "s\n\n";                          \
-  ASSERT_EQ_FILES(in, dec);                                                    \
-  /*if (_SFO || _DCO) ASSERT_LE(abs(coef - 1), eps);*/                         \
+template <typename T>
+void htest(char const* input, bool log = true) {
+  std::string name_of_type(typeid(T).name());
+  std::cout << name_of_type << "_" << input << "_Test\n";
+  std::string in = path + "/files/" + input;
+  std::string enc = path + "/enc_files/" + input + "_" + name_of_type;
+  std::string dec = path + "/dec_files/" + input + "_" + name_of_type;
+  time_t t1 = std::time(nullptr);
+  encode<T>(in.c_str(), enc.c_str());
+  time_t t2 = std::time(nullptr);
+  decode<T>(enc.c_str(), dec.c_str());
+  time_t t3 = std::time(nullptr);
+  size_t s1 = std::filesystem::file_size(in);
+  size_t s2 = std::filesystem::file_size(enc);
+  size_t s3 = std::filesystem::file_size(dec);
+  ASSERT_EQ(s1, s3);
+  double coef = static_cast<double>(s1) / static_cast<double>(s2);
+  if (log) {
+    std::cout << "Start size: " << s1 << ", encoded_file size: " << s2
+              << ", encode mode: " << get_mode_from_file(enc.c_str())
+              << ", compression ratio: " << coef << "\n";
+    std::cout << "Encode time: " << t2 - t1 << "s\n";
+    std::cout << "Decode time: " << t3 - t2 << "s\n\n";
+  }
+  ASSERT_EQ_FILES(in, dec)
+  if (s2 != 0) {
+    ASSERT_TRUE(coef > 0.8 || s2 <= s1 + DEFAULT_SMALL_SIZE / BLOCK_SIZE);
+  }
 }
 
-#define HTEST(input)              \
-  MY_TEST(ct_string, input)
-//  MY_TEST(ct_vector_bool, input)  \
-//  MY_TEST(ct_vector_int, input)
+#define HTEST(input)                            \
+  TEST(input, string) {                         \
+    htest<ct_string>(#input);                   \
+  }                                             \
+  TEST(input, vector_bool) {                    \
+    htest<ct_vector_bool>(#input);              \
+  }                                             \
+  TEST(input, vector_char) {                    \
+    htest<ct_vector_ints<char>>(#input);        \
+  }                                             \
+  TEST(input, vector_short) {                   \
+    htest<ct_vector_ints<short>>(#input);       \
+  }                                             \
+  TEST(input, vector_int) {                     \
+    htest<ct_vector_ints<int>>(#input);         \
+  }                                             \
+  TEST(input, vector_long) {                    \
+    htest<ct_vector_ints<long>>(#input);        \
+  }                                             \
+  TEST(input, vector_long_long) {               \
+    htest<ct_vector_ints<long long>>(#input);   \
+  }
 
-HTEST(input)
+TEST(special, file_not_found) {
+  ASSERT_THROW(encode("", ""), std::runtime_error);
+}
 
-#ifdef _ALL_TESTS
+TEST(special, empty_string) {
+//  ASSERT_EQ(encode(std::string("")), "");
+}
 
 // 0
 HTEST(empty)
@@ -61,6 +102,9 @@ HTEST(one_char)
 // 127 b
 HTEST(simple)
 
+// 1 Kb, 165 b
+HTEST(i_said_everything_i_wanted)
+
 // 3 Kb, 167 b
 HTEST(imo2022_chinese)
 
@@ -68,13 +112,16 @@ HTEST(imo2022_chinese)
 HTEST(test_elf)
 
 // 62 Kb, 839 b
-HTEST(war_and_peace_wiki)
+//HTEST(war_and_peace_wiki)
 
 // 137 Kb, 648 b
 HTEST(test_asm)
 
 // 263 Kb, 907 b
 HTEST(cpp_tutorial)
+
+// 356 Kb, 1008 b
+HTEST(some_program)
 
 // 1 Mb, 351 Kb, 718 b
 HTEST(organic_chemistry_en)
@@ -83,7 +130,7 @@ HTEST(organic_chemistry_en)
 HTEST(java_tutorial)
 
 // 5 Mb, 788 Kb, 947 b
-//HTEST(organic_chemistry_in_4_volumes)
+HTEST(organic_chemistry_in_4_volumes)
 
 // 16 Mb, 651 Mb, 365 b
 HTEST(AAA)
@@ -92,6 +139,4 @@ HTEST(AAA)
 HTEST(full_abacaba)
 
 // 963 Mb, 216 Kb, 128 b
-//HTEST(bigfile)
-
-#endif
+HTEST(bigfile)

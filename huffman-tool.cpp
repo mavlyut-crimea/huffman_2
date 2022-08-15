@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
     pk.push(std::string(argv[i]));
   }
   if (pk.exist('h') || argc == 1) {
-    std::cout << "Usage: huffman-tool (-c [COMPRESS_MODE] | -d) [CODE_TYPE] "
+    std::cout << "Usage: huffman-tool (-c [COMPRESS_MODE -S SMALL_SIZE] | -d) [CODE_TYPE] "
               << "--input FILE_IN --output FILE_OUT\n"
               << "FLAGS:\n"
               << "\t-h, --help                more information\n"
@@ -152,24 +152,38 @@ int main(int argc, char** argv) {
               << "\t\t-D, --mode=default        (default compress mode) "
               << "use mode (a or u) which is more optimal\n"
               << "\n\tCODE_TYPE_DEFAULT:\n"
-              << "\t\t-S, --ct=string           (default code type)\n"
-              << "\t\t-I, --ct=vector_int       (it doesn't always work correctly)\n"
-              << "\t\t-B, --ct=vector_bool\n"
+              << "\t\t-s, --ct=string             (default code type)\n"
+              << "\t\t-I, --ct=vector_int (1-6)   (it doesn't always work correctly)\n"
+              << "\t\t-b, --ct=vector_bool\n"
+              << "OPTIMIZATIONS:\n"
+              << "\t-S, --sfo (disable | <small_size = " << DEFAULT_SMALL_SIZE << ">)"
               << "\nMore information: https://github.com/mavlyut-crimea/huffman-mavlyut.\n"
         ;
     return 0;
   }
   char const* in = pk.get_arg('i');
   char const* out = pk.get_arg('o');
+//  size_t small_size = DEFAULT_SMALL_SIZE;
+//  if (pk.exist('S')) {
+//    char const* arg = pk.get_arg('S');
+//    if (std::string(arg) == "disable") {
+//      small_size = std::numeric_limits<size_t>::max();
+//    } else {
+//      small_size = atoi(arg);
+//    }
+//  }
   if (pk.exist('c')) {
     if (pk.exist('d')) {
       throw unsupported_option_exception("-cd");
     }
-    if (pk.exist('S')) {
+    // TODO: add small size
+    if (pk.exist('s')) {
       encode<ct_string>(in, out);
     } else if (pk.exist('I')) {
-      encode<ct_vector_int>(in, out);
-    } else if (pk.exist('B')) {
+      int bitness = atoi(pk.get_arg('I'));
+      if (bitness > 6 || bitness < 0)
+      encode<ct_vector_ints<>>(in, out);
+    } else if (pk.exist('b')) {
       encode<ct_vector_bool>(in, out);
     } else {
       encode<ct_default>(in, out);
@@ -178,11 +192,11 @@ int main(int argc, char** argv) {
     if (pk.exist('c')) {
       throw unsupported_option_exception("-cd");
     }
-    if (pk.exist('S')) {
+    if (pk.exist('s')) {
       decode<ct_string>(in, out);
     } else if (pk.exist('I')) {
-      decode<ct_vector_int>(in, out);
-    } else if (pk.exist('B')) {
+      decode<ct_vector_ints<int>>(in, out);
+    } else if (pk.exist('b')) {
       decode<ct_vector_bool>(in, out);
     } else {
       decode<ct_default>(in, out);

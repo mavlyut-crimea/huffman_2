@@ -72,12 +72,11 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
-  if (need_endl) bin >> tmp;
+  if (need_endl) {
+    bin >> tmp;
+    // TODO: assert: tmp == '\n'
+  }
   return ans;
-}
-
-std::basic_istream<char>& ibstream::get_istream() const {
-  return in;
 }
 
 ibstream::operator bool() const {
@@ -119,10 +118,6 @@ void obstream::flush() {
     reset();
   }
   buf.clear();
-}
-
-std::basic_ostream<char>& obstream::get_ostream() const {
-  return out;
 }
 
 void obstream::reset() {
