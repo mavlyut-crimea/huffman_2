@@ -56,7 +56,7 @@ struct parser_keys {
       }
       return push(tmp);
     }
-    if (k.starts_with('-')) {
+    if (k.substr(0, std::min<size_t>(1, k.length())) == "-") {
       for (size_t i = 1; i < k.length(); i++) {
         push(k[i]);
       }
