@@ -10,6 +10,8 @@ find_package(GTest REQUIRED)
 
 include_directories(huffman_lib)
 
+add_executable(tests unit-tests/tests.cpp)
+
 set(lib_huffman
         huffman_lib/bstream.cpp
         huffman_lib/bstream.h
@@ -21,16 +23,13 @@ set(lib_huffman
         huffman_lib/huffman_codes_examples/ct_vector_bool.cpp
         )
 
-add_definitions(-D_SFO)
-
-add_executable(tests ${lib_huffman} unit-tests/tests.cpp)
+#add_definitions(-D_SFO)
 
 add_executable(huffman-tool ${lib_huffman} huffman-tool.cpp)
 
 # don't forget to use same flags at your library
 if (NOT MSVC)
   target_compile_options(tests PRIVATE -Wall -Wno-sign-compare -pedantic)
-  target_compile_options(huffman-tool PRIVATE -Wall -Wno-sign-compare -pedantic)
 endif()
 
 option(USE_SANITIZERS "Enable to build with undefined,leak and address sanitizers" OFF)
@@ -42,12 +41,10 @@ endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 #  target_compile_options(tests PUBLIC -stdlib=libc++)
   target_compile_options(tests PUBLIC -std=c++17)
-  target_compile_options(huffman-tool PUBLIC -std=c++17)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
-  target_compile_options(huffman-tool PUBLIC -D_GLIBCXX_DEBUG)
 endif()
 
 target_link_libraries(tests GTest::gtest GTest::gtest_main)
