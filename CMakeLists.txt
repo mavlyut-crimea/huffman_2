@@ -25,7 +25,7 @@ set(lib_huffman
 
 #add_definitions(-D_SFO)
 
-add_executable(huffman-tool ${lib_huffman} huffman-tool.cpp)
+add_executable(huffman-tool ${lib_huffman} huffman_lib/huffman-tool.cpp)
 
 # don't forget to use same flags at your library
 if (NOT MSVC)
