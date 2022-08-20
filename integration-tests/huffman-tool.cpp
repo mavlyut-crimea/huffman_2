@@ -6,7 +6,7 @@
 #include <set>
 #include <map>
 #include <utility>
-#include "huffman_lib/huffman.h"
+#include "huffman.h"
 
 using namespace huffman_code_type_examples;
 using flags_container = std::map<char, std::string>;
