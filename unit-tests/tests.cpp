@@ -85,7 +85,7 @@ TEST(get, cwd) {
 }
 
 TEST(print, directory) {
-  for (const auto& file_name : std::filesystem::recursive_directory_iterator(path)) {
+  for (const auto& file_name : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
     std::cout << file_name << "\n";
   }
 }
