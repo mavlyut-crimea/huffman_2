@@ -8,7 +8,7 @@ import hashlib
 
 import requests
 
-TESTS_DIR = os.path.join(os.getcwd(), 'data')
+TESTS_DIR = os.path.join(os.getcwd(), 'integration-tests', 'data')
 CHUNK_SIZE = 1024 * 8
 CI_RUN = 'CI_RUN' in os.environ
 DEBUG = 'NO_DEBUG' not in os.environ
