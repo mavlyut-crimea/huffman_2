@@ -35,16 +35,11 @@ const std::string path = std::string(std::filesystem::current_path()) + "/unit-t
 
 template <typename T>
 void htest(char const* input, bool log = true) {
-  std::cout << path << "\n" << std::filesystem::exists(path) << "\n";
-  for (const auto& name : std::filesystem::recursive_directory_iterator(path)) {
-    std::cout << name << "\n";
-  }
   std::string name_of_type(typeid(T).name());
   std::cout << name_of_type << "_" << input << "_Test\n";
   std::string in = path + "/files/" + input;
   std::string enc = path + "/enc_files/" + input + "_" + name_of_type;
   std::string dec = path + "/dec_files/" + input + "_" + name_of_type;
-  std::cout << std::filesystem::exists(in) << "\n";
   time_t t1 = std::time(nullptr);
   encode<T>(in.c_str(), enc.c_str());
   time_t t2 = std::time(nullptr);
@@ -64,7 +59,7 @@ void htest(char const* input, bool log = true) {
   }
   ASSERT_EQ_FILES(in, dec)
   if (s2 != 0) {
-    ASSERT_TRUE(coef > 0.8 || s2 <= s1 + DEFAULT_SMALL_SIZE / BLOCK_SIZE);
+    ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
   }
 }
 
@@ -85,12 +80,12 @@ void htest(char const* input, bool log = true) {
     htest<ct_vector_ints<long long>>(#input);   \
   }
 
-TEST(print, cwd) {
-  std::cout << std::filesystem::current_path();
-  for (const auto& file_name : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
-    std::cout << file_name << "\n";
-  }
-}
+// TEST(print, cwd) {
+//   std::cout << std::filesystem::current_path();
+//   for (const auto& file_name : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
+//     std::cout << file_name << "\n";
+//   }
+// }
 
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
