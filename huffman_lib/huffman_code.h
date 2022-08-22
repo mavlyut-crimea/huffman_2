@@ -120,7 +120,7 @@ namespace huffman_code_type_examples {
     size_t pos_end;   // always in (0, _bitness]
   };
 
-  using ct_default = ct_vector_ints<size_t>;
+  using ct_default = ct_vector_ints<int>;
 }
 
 #endif // HUFFMAN_HUFFMAN_CODE_H
