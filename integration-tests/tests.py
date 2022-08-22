@@ -25,6 +25,7 @@ def find_tool():
     name = 'huffman-tool' if sys.platform.lower() != 'windows' else 'huffman-tool.exe'
     for root, dirs, files in os.walk(os.getcwd() + '/..'):
         if name in files:
+            print(os.path.join(root, name))
             return os.path.join(root, name)
 
 
