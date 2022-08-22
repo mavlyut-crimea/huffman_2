@@ -80,6 +80,7 @@ void htest(char const* input, bool log = true) {
     htest<ct_vector_ints<long long>>(#input);   \
   }
 
+/*
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
 }
@@ -102,7 +103,6 @@ TEST(special, broken_all_mode) {
   ASSERT_ANY_THROW(decode("0"));
 }
 
-/*
 // 0
 HTEST(empty)
 
