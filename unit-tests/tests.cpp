@@ -2,6 +2,7 @@
 #include "../huffman_lib/huffman.h"
 #include <ctime>
 #include <cmath>
+#include <filesystem>
 
 using namespace huffman_code_type_examples;
 
@@ -79,6 +80,13 @@ void htest(char const* input, bool log = true) {
   TEST(input, vector_long_long) {               \
     htest<ct_vector_ints<long long>>(#input);   \
   }
+
+TEST(print, cwd) {
+  std::cout << std::filesystem::current_path();
+  for (const auto& file_name : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
+    std::cout << file_name << "\n";
+  }
+}
 
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
