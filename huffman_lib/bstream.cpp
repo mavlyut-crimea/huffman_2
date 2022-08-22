@@ -4,11 +4,10 @@
 
 #include "bstream.h"
 
-/// ibstream
-
 #define NEED_READ 100
 #define BUFSIZE 4096
-#define BYTESIZE 8
+
+/// ibstream
 
 ibstream::ibstream(std::basic_istream<char>& in)
     : eof(false), last_byte(false), mod(NEED_READ), in(in >> std::noskipws) {}
@@ -17,7 +16,9 @@ ibstream::~ibstream() = default;
 
 ibstream& ibstream::operator>>(char& x) {
   in >> x;
-  if (in) eof = true;
+  if (in.eof()) {
+    eof = true;
+  }
   return *this;
 }
 
@@ -83,10 +84,6 @@ ibstream::operator bool() const {
   return !eof || !last_byte || mod;
 }
 
-bool ibstream::operator!() const {
-  return eof && mod == NEED_READ;
-}
-
 /// obstream
 
 obstream::obstream(std::basic_ostream<char>& out)
@@ -98,14 +95,14 @@ obstream::~obstream() {
 
 obstream& obstream::operator<<(bool x) {
   if (mod == BYTESIZE) {
-    if (buf.size() + 1 > BUFSIZE) {
-      out << buf;
-      buf.clear();
-    }
-    reset();
+    append(tmp_char);
+    tmp_char = 0;
+    mod = 0;
   }
   tmp_char <<= 1;
-  if (x) tmp_char++;
+  if (x) {
+    tmp_char++;
+  }
   mod++;
   return *this;
 }
@@ -115,13 +112,16 @@ void obstream::flush() {
   if (mod) {
     out << tmp_char << mod;
     out.flush();
-    reset();
+    tmp_char = 0;
+    mod = 0;
   }
   buf.clear();
 }
 
-void obstream::reset() {
-  buf += tmp_char;
-  tmp_char = 0;
-  mod = 0;
+void obstream::append(char ch) {
+  buf += ch;
+  if (buf.size() > BUFSIZE) {
+    out << buf;
+    buf.clear();
+  }
 }

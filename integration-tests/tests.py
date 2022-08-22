@@ -8,7 +8,7 @@ import hashlib
 
 import requests
 
-TESTS_DIR = os.path.join(os.getcwd(), 'integration-tests', 'data')
+TESTS_DIR = os.path.join(os.getcwd(), 'data')
 CHUNK_SIZE = 1024 * 8
 CI_RUN = 'CI_RUN' in os.environ
 DEBUG = 'NO_DEBUG' not in os.environ
@@ -23,7 +23,7 @@ def debug(*args, end='\n'):
 
 def find_tool():
     name = 'huffman-tool' if sys.platform.lower() != 'windows' else 'huffman-tool.exe'
-    for root, dirs, files in os.walk(os.getcwd()):
+    for root, dirs, files in os.walk('/home/mavlyut/CLionProjects/huffman-mavlyut'):
         if name in files:
             return os.path.join(root, name)
 

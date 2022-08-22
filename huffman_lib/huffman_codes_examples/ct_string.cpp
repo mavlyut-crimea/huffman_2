@@ -31,3 +31,7 @@ bool ct_string::pop_back() {
 bool ct_string::operator[](size_t i) const {
   return _str[i] == '1';
 }
+
+void ct_string::print_optimized(obstream& bout) const {
+  print(bout);
+}

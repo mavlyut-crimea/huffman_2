@@ -23,6 +23,7 @@ struct huffman_code_type {
   virtual bool pop_back() = 0; // has right_code been removed
   void print(std::basic_ostream<char>&) const;
   void print(obstream&) const;
+  virtual void print_optimized(obstream&) const = 0;
   virtual bool operator[](size_t) const = 0;
 };
 
@@ -38,6 +39,7 @@ namespace huffman_code_type_examples {
     size_t size() const override;
     bool pop_back() override;
     bool operator[](size_t) const override;
+    void print_optimized(obstream&) const override;
 
   private:
     std::string _str;
@@ -51,6 +53,7 @@ namespace huffman_code_type_examples {
     size_t size() const override;
     bool pop_back() override;
     bool operator[](size_t) const override;
+    void print_optimized(obstream&) const override;
 
   private:
     std::vector<bool> _vec;
@@ -102,13 +105,22 @@ namespace huffman_code_type_examples {
       return (tmp >> ((tmp == _vec.back() ? pos_end : _bitness) - 1 - i % _bitness)) & 1;
     }
 
+    void print_optimized(obstream& bout) const override {
+      for (size_t i = 0; i < _vec.size() - 1; i++) {
+        bout.print_int<_int_type>(_vec[i]);
+      }
+      for (size_t i = pos_end; i-- > 0; ) {
+        bout << ((_vec.back() >> i) & 1);
+      }
+    }
+
   private:
     static constexpr size_t _bitness = sizeof(_int_type) * 8;
     std::vector<_int_type> _vec;
     size_t pos_end;   // always in (0, _bitness]
   };
 
-  using ct_default = ct_string;
+  using ct_default = ct_vector_ints<size_t>;
 }
 
 #endif // HUFFMAN_HUFFMAN_CODE_H

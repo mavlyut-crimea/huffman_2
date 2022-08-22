@@ -34,3 +34,7 @@ bool ct_vector_bool::pop_back() {
 bool ct_vector_bool::operator[](size_t i) const {
   return _vec[i];
 }
+
+void ct_vector_bool::print_optimized(obstream& bout) const {
+  print(bout);
+}

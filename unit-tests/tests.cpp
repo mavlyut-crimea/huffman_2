@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
     ASSERT_TRUE(fin1.eof() && fin2.eof());  \
 }
 
-const std::string path = ".";
+const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
 
 template <typename T>
 void htest(char const* input, bool log = true) {
@@ -70,12 +70,6 @@ void htest(char const* input, bool log = true) {
   TEST(input, vector_bool) {                    \
     htest<ct_vector_bool>(#input);              \
   }                                             \
-  TEST(input, vector_char) {                    \
-    htest<ct_vector_ints<char>>(#input);        \
-  }                                             \
-  TEST(input, vector_short) {                   \
-    htest<ct_vector_ints<short>>(#input);       \
-  }                                             \
   TEST(input, vector_int) {                     \
     htest<ct_vector_ints<int>>(#input);         \
   }                                             \
@@ -86,58 +80,72 @@ void htest(char const* input, bool log = true) {
     htest<ct_vector_ints<long long>>(#input);   \
   }
 
-// TEST(special, file_not_found) {
-//   ASSERT_THROW(encode("", ""), std::runtime_error);
-// }
+TEST(special, file_not_found) {
+  ASSERT_THROW(encode("", ""), std::runtime_error);
+}
 
-// TEST(special, empty_string) {
-//  ASSERT_EQ(encode(std::string("")), "");
-// }
+TEST(special, empty_string) {
+  std::string enc = encode(std::string(""));
+  ASSERT_NE(enc, "");
+}
+
+TEST(special, check_string_return) {
+  std::string str("abacaba");
+  ASSERT_EQ(decode(encode(str)), str);
+}
+
+TEST(special, unknown_mode) {
+  ASSERT_ANY_THROW(decode("-120\nhrknf"));
+}
+
+TEST(special, broken_all_mode) {
+  ASSERT_ANY_THROW(decode("0"));
+}
 
 // 0
-// HTEST(empty)
+HTEST(empty)
 
 // 7 b
-// HTEST(one_char)
+HTEST(one_char)
 
 // 127 b
-// HTEST(simple)
+HTEST(simple)
 
 // 1 Kb, 165 b
-// HTEST(i_said_everything_i_wanted)
+HTEST(i_said_everything_i_wanted)
 
 // 3 Kb, 167 b
-// HTEST(imo2022_chinese)
+HTEST(imo2022_chinese)
 
 // 21 Kb, 667 b
-// HTEST(test_elf)
+HTEST(test_elf)
 
 // 62 Kb, 839 b
-//HTEST(war_and_peace_wiki)
+HTEST(war_and_peace_wiki)
 
 // 137 Kb, 648 b
-// HTEST(test_asm)
+HTEST(test_asm)
 
 // 263 Kb, 907 b
-// HTEST(cpp_tutorial)
+HTEST(cpp_tutorial)
 
 // 356 Kb, 1008 b
-// HTEST(some_program)
+HTEST(some_program)
 
 // 1 Mb, 351 Kb, 718 b
-// HTEST(organic_chemistry_en)
+HTEST(organic_chemistry_en)
 
 // 1 Mb, 391 Kb, 166 b
-// HTEST(java_tutorial)
+HTEST(java_tutorial)
 
 // 5 Mb, 788 Kb, 947 b
-// HTEST(organic_chemistry_in_4_volumes)
+HTEST(organic_chemistry_in_4_volumes)
 
 // 16 Mb, 651 Mb, 365 b
-// HTEST(AAA)
+HTEST(AAA)
 
 // 63 Mb, 1023 Kb, 1023 b
-// HTEST(full_abacaba)
+HTEST(full_abacaba)
 
 // 963 Mb, 216 Kb, 128 b
-// HTEST(bigfile)
+//HTEST(bigfile)

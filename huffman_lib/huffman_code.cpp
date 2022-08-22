@@ -44,6 +44,8 @@ void huffman_code_type::print(obstream& bout) const {
 }
 
 obstream& operator<<(obstream& bout, huffman_code_type const& x) {
-  x.print(bout);
+  x.print_optimized(bout);
+//  x.print(bout);
+  // TODO: x.print(bout);
   return bout;
 }

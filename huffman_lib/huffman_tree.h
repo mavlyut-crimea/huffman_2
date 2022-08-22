@@ -95,9 +95,6 @@ struct tree {
   }
 
   void push(std::string const& cd, char letter) {
-    if (letter == 't') {
-      int a = 5;
-    }
     if (!cd.length()) {
       return;
     }

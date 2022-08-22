@@ -10,8 +10,6 @@ find_package(GTest REQUIRED)
 
 include_directories(huffman_lib)
 
-add_executable(tests unit-tests/tests.cpp)
-
 set(lib_huffman
         huffman_lib/bstream.cpp
         huffman_lib/bstream.h
@@ -25,7 +23,9 @@ set(lib_huffman
 
 #add_definitions(-D_SFO)
 
-add_executable(huffman-tool ${lib_huffman} integration-tests/huffman-tool.cpp)
+add_executable(huffman-tool ${lib_huffman} huffman-tool.cpp)
+
+add_executable(tests ${lib_huffman} unit-tests/tests.cpp)
 
 # don't forget to use same flags at your library
 if (NOT MSVC)
