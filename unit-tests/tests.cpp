@@ -84,6 +84,12 @@ TEST(get, cwd) {
   std::cout << path << "\n";
 }
 
+TEST(print, directory) {
+  for (const auto& file_name : std::filesystem::recursive_directory_iterator(path)) {
+    std::cout << file_name << "\n";
+  }
+}
+
 /*
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
