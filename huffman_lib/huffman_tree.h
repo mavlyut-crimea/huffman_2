@@ -18,16 +18,15 @@ constexpr size_t MAX_SIZE = 256;
 #define weight_t size_t
 
 enum MODES : int {
-  ORIG = -1,
+  ONE_CHAR = -2,
   ALL,
-  ONE_CHAR,
   USED,
   UNKNOWN = MAX_SIZE + 1
 };
 
 MODES to_mode(int x) {
-  if (x < -1) return UNKNOWN;
-  if (x < 2) return MODES{x};
+  if (x < -2) return UNKNOWN;
+  if (x < 0) return MODES{x};
   if (x <= MAX_SIZE) return USED;
   return UNKNOWN;
 }
@@ -45,13 +44,9 @@ constexpr static size_t count_of_digits(size_t x) {
   return static_cast<size_t>(floor(log10(static_cast<double>(x)) + 1));
 }
 
-const int DEFAULT_SMALL_SIZE = 416;
-
-// TODO: I haven't calculate optimal SMALL_SIZE yet, so why won't it be 416
 template <typename code_t = huffman_code_type_examples::ct_default,
-    size_t SMALL_SIZE = DEFAULT_SMALL_SIZE,
     typename std::enable_if_t<std::is_base_of_v<huffman_code_type, code_t>
-                              && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
+        && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
 struct tree {
   tree() : cnt_used(0), root(new node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),
@@ -108,31 +103,6 @@ struct tree {
       tmp = (cd[i] == '1' ? tmp->right : tmp->left);
     }
     (cd[i] == '1' ? tmp->right : tmp->left) = new node(to_char_t(letter));
-  }
-
-  bool need_to_compress(size_t start_size) const {
-#ifdef _SFO
-    if (start_size < SMALL_SIZE) {
-      return false;
-    }
-#endif
-#ifdef _DCO
-    size_t tmp_size = 0, i = 0, pos = 0, len;
-    while (i < MAX_SIZE) {
-      len = codes[i].size() * weights[i];
-      tmp_size += len / BLOCK_SIZE;
-      pos += len % BLOCK_SIZE;
-      if (pos > BLOCK_SIZE) {
-        tmp_size++;
-        pos = 0;
-      }
-      i++;
-      if (tmp_size > start_size) {
-        return false;
-      }
-    }
-#endif
-    return true;
   }
 
   friend std::basic_ostream<char>&

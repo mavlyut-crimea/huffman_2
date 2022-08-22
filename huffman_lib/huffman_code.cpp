@@ -17,11 +17,11 @@ operator<<(std::basic_ostream<char>& out, huffman_code_type const& a) {
 
 void huffman_code_type::print(std::basic_ostream<char>& out) const {
   size_t sz = size();
-  size_t end = sz / BLOCK_SIZE * BLOCK_SIZE;
+  size_t end = sz / BYTESIZE * BYTESIZE;
   char tmp;
-  for (size_t i = 0; i < end; i += BLOCK_SIZE) {
+  for (size_t i = 0; i < end; i += BYTESIZE) {
     tmp = 0;
-    for (size_t j = 0; j < BLOCK_SIZE; j++) {
+    for (size_t j = 0; j < BYTESIZE; j++) {
       tmp <<= 1;
       if (operator[](i + j)) tmp++;
     }
@@ -46,6 +46,5 @@ void huffman_code_type::print(obstream& bout) const {
 obstream& operator<<(obstream& bout, huffman_code_type const& x) {
   x.print_optimized(bout);
 //  x.print(bout);
-  // TODO: x.print(bout);
   return bout;
 }

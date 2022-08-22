@@ -45,10 +45,10 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   }
   end_work<stream_type>(fin);
   // EFO
-  if (!tr.get_cnt_used()) {
-    fout << "-1";
-    return;
-  }
+//  if (!tr.get_cnt_used()) {
+//    fout << "0";
+//    return;
+//  }
   if (tr.get_cnt_used() == 1) {
 #ifdef LOG
     std::cout << "mode: " << MODES::ONE_CHAR << '\n';
@@ -66,22 +66,12 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   fin = stream_type(in, std::ios_base::in);
   fin >> std::noskipws;
   check_stream(fin);
-  if (tr.need_to_compress(tr.get_root()->weight)) {
-    fout << tr;
-    obstream bout = fout;
-    while (fin >> tmp_char) {
-      bout << tr.get_code(to_char_t(tmp_char));
-    }
-    bout.flush();
-  } else {
-#ifdef LOG
-    std::cout << "mode: " << MODES::ORIG << '\n';
-#endif
-    fout << MODES::ORIG << '\n';
-    while (fin >> tmp_char) {
-      fout << tmp_char;
-    }
+  fout << tr;
+  obstream bout = fout;
+  while (fin >> tmp_char) {
+    bout << tr.get_code(to_char_t(tmp_char));
   }
+  bout.flush();
   end_work<stream_type>(fin);
 }
 
@@ -147,16 +137,11 @@ void decode(std::basic_istream<char>& fin,
   char tmp;
   int imode;
   bin >> imode;
-  MODES mode = to_mode(imode);
-#ifdef LOG
-  std::cout << imode << "\n";
-#endif
-  if (mode == MODES::ORIG) {
-    while (fin >> tmp) {
-      fout << tmp;
-    }
+  if (imode == 0) {
     return;
-  } else if (mode == MODES::ONE_CHAR) {
+  }
+  MODES mode = to_mode(imode);
+  if (mode == MODES::ONE_CHAR) {
     weight_t cnt;
     fin >> tmp >> cnt;
     for (size_t i = 0; i < cnt; i++) {
@@ -174,24 +159,15 @@ void decode(std::basic_istream<char>& fin,
   auto nd = tr.get_root();
   while (bin) {
     bin >> x;
-#ifdef LOG
-    std::cout << x;
-#endif
     if ((nd->right == nullptr) != (nd->left == nullptr)) {
       std::cout << "error\n";
     }
     nd = x ? nd->right : nd->left;
     if (nd->is_leaf()) {
-#ifdef LOG
-      std::cout << from_char_t(nd->value);
-#endif
       fout << from_char_t(nd->value);
       nd = tr.get_root();
     }
   }
-#ifdef LOG
-  std::cout << '\n';
-#endif
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,

@@ -46,14 +46,18 @@ ibstream& ibstream::operator>>(int& x) {
   // for entering mode
   char ws;
   in >> x >> ws;
-  if (in.eof()) eof = true;
+  if (in.eof()) {
+    eof = true;
+  }
   return *this;
 }
 
 ibstream& ibstream::operator>>(size_t& x) {
   char ws;
   in >> x >> ws;
-  if (in.eof()) eof = true;
+  if (in.eof()) {
+    eof = true;
+  }
   return *this;
 }
 

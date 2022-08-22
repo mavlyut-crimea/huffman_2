@@ -10,8 +10,6 @@
 
 #include "bstream.h"
 
-static constexpr size_t BLOCK_SIZE = sizeof(char) * 8;
-
 struct huffman_code_type {
   huffman_code_type() = default;
   huffman_code_type(huffman_code_type const&) = default;
