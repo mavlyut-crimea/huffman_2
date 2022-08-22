@@ -80,6 +80,10 @@ void htest(char const* input, bool log = true) {
     htest<ct_vector_ints<long long>>(#input);   \
   }
 
+TEST(get, cwd) {
+  std::cout << path << "\n";
+}
+
 /*
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
