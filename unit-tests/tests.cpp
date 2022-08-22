@@ -102,6 +102,7 @@ TEST(special, broken_all_mode) {
   ASSERT_ANY_THROW(decode("0"));
 }
 
+/*
 // 0
 HTEST(empty)
 
@@ -149,3 +150,4 @@ HTEST(full_abacaba)
 
 // 963 Mb, 216 Kb, 128 b
 //HTEST(bigfile)
+*/
