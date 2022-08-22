@@ -80,16 +80,6 @@ void htest(char const* input, bool log = true) {
     htest<ct_vector_ints<long long>>(#input);   \
   }
 
-TEST(get, cwd) {
-  std::cout << path << "\n";
-}
-
-TEST(print, directory) {
-  for (const auto& file_name : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
-    std::cout << file_name << "\n";
-  }
-}
-
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
 }
