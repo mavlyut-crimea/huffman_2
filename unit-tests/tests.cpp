@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../huffman_lib/huffman.h"
+#include "huffman_lib/huffman.h"
 #include <ctime>
 #include <cmath>
 
@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
     ASSERT_TRUE(fin1.eof() && fin2.eof());  \
 }
 
-const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
+const std::string path = std::string(std::filesystem::current_path()) + "/unit-tests";
 
 template <typename T>
 void htest(char const* input, bool log = true) {
@@ -90,7 +90,6 @@ TEST(print, directory) {
   }
 }
 
-/*
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
 }
@@ -159,5 +158,4 @@ HTEST(AAA)
 HTEST(full_abacaba)
 
 // 963 Mb, 216 Kb, 128 b
-//HTEST(bigfile)
-*/
+HTEST(bigfile)
