@@ -41,6 +41,7 @@ void htest(char const* input, bool log = true) {
   std::string in = path + "/files/" + input;
   std::string enc = path + "/enc_files/" + input + "_" + name_of_type;
   std::string dec = path + "/dec_files/" + input + "_" + name_of_type;
+  std::cout << std::filesystem::exists(in) << "\n";
   time_t t1 = std::time(nullptr);
   encode<T>(in.c_str(), enc.c_str());
   time_t t2 = std::time(nullptr);
