@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "huffman_lib/huffman.h"
+#include "../huffman_lib/huffman.h"
 #include <ctime>
 #include <cmath>
 
