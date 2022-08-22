@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <sstream>
 
 static void check_stream(std::basic_ios<char> const& stream) {
   if (!stream.good()) {
