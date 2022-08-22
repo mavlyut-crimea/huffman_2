@@ -112,9 +112,6 @@ static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
   std::string tmp;
   for (size_t i = 0; i < MAX_SIZE; i++) {
     bin >> len;
-    if (len == 0) {
-      int s = 5;
-    }
     tmp = read_bin_string(bin, len, len);
     tr.push(tmp, from_char_t(i));
 #ifdef LOG
