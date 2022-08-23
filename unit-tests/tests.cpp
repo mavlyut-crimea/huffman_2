@@ -109,9 +109,6 @@ TEST(special, broken_all_mode) {
   ASSERT_ANY_THROW(decode("0"));
 }
 
-// 0
-HTEST(empty)
-
 // 7 b
 HTEST(one_char)
 
