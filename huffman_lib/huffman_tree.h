@@ -48,11 +48,9 @@ template <typename code_t = huffman_code_type_examples::ct_default,
     typename std::enable_if_t<std::is_base_of_v<huffman_code_type, code_t>
         && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
 struct tree {
-  tree() : cnt_used(0), root(),
+  tree() : cnt_used(0), root(new node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),
-        codes(std::vector<code_t>(MAX_SIZE, code_t())) {
-    root.left = new node();
-  }
+        codes(std::vector<code_t>(MAX_SIZE, code_t())) {}
 
   ~tree() {
     clear(get_root());
@@ -85,6 +83,7 @@ struct tree {
       q.push(new node(x, y));
     }
     if (q.size()) {
+      delete root.left;
       root.left = q.top();
     }
     code_t tmp_code;
