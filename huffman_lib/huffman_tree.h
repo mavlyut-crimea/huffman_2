@@ -48,9 +48,11 @@ template <typename code_t = huffman_code_type_examples::ct_default,
     typename std::enable_if_t<std::is_base_of_v<huffman_code_type, code_t>
         && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
 struct tree {
-  tree() : cnt_used(0), root(new node()),
+  tree() : cnt_used(0), root(node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),
-        codes(std::vector<code_t>(MAX_SIZE, code_t())) {}
+        codes(std::vector<code_t>(MAX_SIZE, code_t())) {
+    root.left = new node();
+  }
 
   ~tree() {
     clear(get_root());
@@ -108,17 +110,11 @@ struct tree {
   friend std::basic_ostream<char>&
   operator<<(std::basic_ostream<char>& out, tree<code_t> const& x) {
     if (x.a_mode_is_better()) {
-#ifdef LOG
-      std::cout << "mode: " << MODES::ORIG << '\n';
-#endif
       out << MODES::ALL << '\n';
       for (code_t const& i : x.codes) {
         out << i << '\n';
       }
     } else {
-#ifdef LOG
-      std::cout << "mode: u-" << x.cnt_used << '\n';
-#endif
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
         if (x.weights[i]) {
@@ -199,15 +195,8 @@ private: // methods
     // Size_a = LEN + 3 * MAX_SIZE - cnt_used + 2
     // Size_u = LEN + MAX_SIZE + 2 * cnt_used + 1 + floor(log10(cnt_used) + 1)
     // So, a_mode is better, when Size_a < Size_u
-#ifdef _MODE_A
-    return true;
-#else
-  #ifdef _MODE_U
-    return false;
-  #else
+    // TODO: recalc
     return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
-  #endif
-#endif
   }
 
 public: // getters

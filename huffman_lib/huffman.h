@@ -44,15 +44,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     tr.inc(to_char_t(tmp_char));
   }
   end_work<stream_type>(fin);
-  // EFO
-//  if (!tr.get_cnt_used()) {
-//    fout << "0";
-//    return;
-//  }
   if (tr.get_cnt_used() == 1) {
-#ifdef LOG
-    std::cout << "mode: " << MODES::ONE_CHAR << '\n';
-#endif
     fout << MODES::ONE_CHAR << '\n';
     for (size_t i = 0; i < MAX_SIZE; i++) {
       if (tr.get_count(i)) {
@@ -104,9 +96,6 @@ static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
     bin >> len;
     tmp = read_bin_string(bin, len, len);
     tr.push(tmp, from_char_t(i));
-#ifdef LOG
-    std::cout << from_char_t(i) << " " << tmp << "\n";
-#endif
   }
 }
 
@@ -121,9 +110,6 @@ static void read_used_codes(ibstream& bin, tree<code_t>& tr, size_t cnt) {
     bin >> letter >> len;
     tmp = read_bin_string(bin, len);
     tr.push(tmp, letter);
-#ifdef LOG
-    std::cout << letter << " " << tmp << "\n";
-#endif
   }
 }
 
