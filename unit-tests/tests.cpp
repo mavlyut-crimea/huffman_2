@@ -39,8 +39,8 @@ void htest(std::string const& input, bool log = false) {
   std::string name_of_type(typeid(T).name());
   if (log) std::cout << name_of_type << "_" << input << "_Test\n";
   std::string in = path + "/files/" + input;
-  std::string enc = path + "/enc_files/" + input + "_" + name_of_type;
-  std::string dec = path + "/dec_files/" + input + "_" + name_of_type;
+  std::string enc = path + input + "_" + name_of_type + ".huf";
+  std::string dec = path + input + "_" + name_of_type + "_decomp";
   time_t t1 = std::time(nullptr);
   encode<T>(in.c_str(), enc.c_str());
   time_t t2 = std::time(nullptr);
@@ -115,9 +115,6 @@ TEST(special, no_mode_2) {
 TEST(special, broken_all_mode) {
   ASSERT_ANY_THROW(decode("-1\n"));
 }
-
-// 0
-HTEST(empty)
 
 // 7 b
 HTEST(one_char)
