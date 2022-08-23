@@ -135,7 +135,7 @@ void decode(std::basic_istream<char>& fin,
   tree<code_t> tr;
   ibstream bin = fin;
   char tmp;
-  int imode;
+  int imode = MODES::UNKNOWN;
   bin >> imode;
   if (imode == 0) {
     return;
@@ -153,7 +153,7 @@ void decode(std::basic_istream<char>& fin,
   } else if (mode == MODES::USED) {
     read_used_codes(bin, tr, imode);
   } else {
-    throw std::runtime_error("File was broken: unknown imode " + std::to_string(imode));
+    throw std::runtime_error("File was broken: unknown mode " + std::to_string(imode));
   }
   bool x;
   auto nd = tr.get_root();

@@ -45,7 +45,11 @@ ibstream& ibstream::operator>>(bool& x) {
 ibstream& ibstream::operator>>(int& x) {
   // for entering mode
   char ws;
-  in >> x >> ws;
+  if (in >> x) {
+    in >> ws;
+  } else {
+    throw std::runtime_error("File was broken: no mode");
+  }
   if (in.eof()) {
     eof = true;
   }
@@ -54,7 +58,11 @@ ibstream& ibstream::operator>>(int& x) {
 
 ibstream& ibstream::operator>>(size_t& x) {
   char ws;
-  in >> x >> ws;
+  if (in >> x) {
+    in >> ws;
+  } else {
+    throw std::runtime_error("File was broken: no mode");
+  }
   if (in.eof()) {
     eof = true;
   }
@@ -67,13 +75,13 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
   char tmp;
   for (size_t i = 0; i < len / BYTESIZE; i++) {
     bin >> tmp;
-    for (size_t k = BYTESIZE; k-- > 0; ) {
+    for (size_t k = BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (len % BYTESIZE) {
     bin >> tmp;
-    for (size_t k = len % BYTESIZE; k-- > 0; ) {
+    for (size_t k = len % BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
