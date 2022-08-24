@@ -52,7 +52,7 @@ jobs:
         name: Test main with valgrind
         run: ci-extra/test-valgrind.sh
 
-      - if: ${{ matrix.build_type == 'Release' }}
-        name: Integration tests
-        run: |
-          python3 -m unittest integration-tests/tests.py
+#       - if: ${{ matrix.build_type == 'Release' }}
+#         name: Integration tests
+#         run: |
+#           python3 -m unittest integration-tests/tests.py
