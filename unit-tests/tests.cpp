@@ -45,8 +45,8 @@ void htest(std::string const& input) {
   std::cout << name_of_type << "_" << input << "_Test\n";
 #endif
   std::string in = path + "/files/" + input;
-  std::string enc = path + "/enc_files/" + input + "_" + name_of_type;
-  std::string dec = path + "/dec_files/" + input + "_" + name_of_type;
+  std::string enc = path + input + "_" + name_of_type + ".huf";
+  std::string dec = path + input + "_" + name_of_type + "_decomp";
 #ifdef LOG
   time_t t1 = std::time(nullptr);
 #endif
