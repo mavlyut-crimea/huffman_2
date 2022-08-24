@@ -37,34 +37,34 @@ const std::string path = std::string(std::filesystem::current_path()) + "/unit-t
 
 template <typename T>
 void htest(std::string const& input, bool log = false) {
-//   if (log) std::cout << path << "\n";
+  if (log) std::cout << path << "\n";
   std::string name_of_type(typeid(T).name());
-//   if (log) std::cout << name_of_type << "_" << input << "_Test\n";
+  if (log) std::cout << name_of_type << "_" << input << "_Test\n";
   std::string in = path + "/files/" + input;
   std::string enc = path + input + "_" + name_of_type + ".huf";
   std::string dec = path + input + "_" + name_of_type + "_decomp";
-//   time_t t1 = std::time(nullptr);
+  time_t t1 = std::time(nullptr);
   encode<T>(in.c_str(), enc.c_str());
-//   time_t t2 = std::time(nullptr);
-//   decode<T>(enc.c_str(), dec.c_str());
-//   time_t t3 = std::time(nullptr);
-//   size_t s1 = std::filesystem::file_size(in);
-//   size_t s2 = std::filesystem::file_size(enc);
-//   size_t s3 = std::filesystem::file_size(dec);
-//   ASSERT_EQ(s1, s3);
-//   double coef = static_cast<double>(s1) / static_cast<double>(s2);
-//   if (log) {
-//     std::cout << "Start size: " << s1
-//               << ", encoded_file size: " << s2
-//               << ", encode mode: " << get_mode_from_file(enc.c_str())
-//               << ", compression ratio: " << coef << "\n";
-//     std::cout << "Encode time: " << t2 - t1 << "s\n";
-//     std::cout << "Decode time: " << t3 - t2 << "s\n\n";
-//   }
-//   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
-//   if (s2 != 0) {
-//     ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
-//   }
+  time_t t2 = std::time(nullptr);
+  decode<T>(enc.c_str(), dec.c_str());
+  time_t t3 = std::time(nullptr);
+  size_t s1 = std::filesystem::file_size(in);
+  size_t s2 = std::filesystem::file_size(enc);
+  size_t s3 = std::filesystem::file_size(dec);
+  ASSERT_EQ(s1, s3);
+  double coef = static_cast<double>(s1) / static_cast<double>(s2);
+  if (log) {
+    std::cout << "Start size: " << s1
+              << ", encoded_file size: " << s2
+              << ", encode mode: " << get_mode_from_file(enc.c_str())
+              << ", compression ratio: " << coef << "\n";
+    std::cout << "Encode time: " << t2 - t1 << "s\n";
+    std::cout << "Decode time: " << t3 - t2 << "s\n\n";
+  }
+  ASSERT_EQ_FILES(in.c_str(), dec.c_str());
+  if (s2 != 0) {
+    ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
+  }
 }
 
 #define HTEST(input)                            \
