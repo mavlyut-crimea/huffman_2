@@ -156,8 +156,6 @@ HTEST(cpp_tutorial)
 // 356 Kb, 1008 b
 HTEST(some_program)
 
-#ifdef _ENABLE_BIG_TESTS
-
 // 1 Mb, 351 Kb, 718 b
 HTEST(organic_chemistry_en)
 
@@ -202,5 +200,3 @@ TEST(bigfile, ct_default) {
   fout.close();
   htest<ct_default>("bigfile");
 }
-
-#endif
