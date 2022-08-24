@@ -58,7 +58,7 @@ namespace huffman_code_type_examples {
   };
 
   template <typename _int_type = uint8_t,
-      typename std::enable_if_t<std::is_integral<_int_type>::value, void*> = nullptr>
+      typename std::enable_if<std::is_integral<_int_type>::value, void*>::type = nullptr>
   struct ct_vector_ints : huffman_code_type {
     ct_vector_ints() : pos_end(_bitness) {}
 

@@ -18,21 +18,21 @@ static void check_stream(std::basic_ios<char> const& stream) {
 }
 
 template <typename T,
-    typename std::enable_if_t<!std::is_same_v<T, std::stringstream>, void*> = nullptr>
+    typename std::enable_if<!std::is_same<T, std::stringstream>::value, void*>::type = nullptr>
 static void end_work(T& x) {
   x.close();
 }
 
 template <typename T,
-    typename std::enable_if_t<std::is_same_v<T, std::stringstream>, void*> = nullptr>
+    typename std::enable_if<std::is_same<T, std::stringstream>::value, void*>::type = nullptr>
 static void end_work(T& x) {
   x.clear();
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
     bool read_from_file = true,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void encode(char const* in, std::basic_ostream<char>& fout) {
   using stream_type = std::conditional_t<read_from_file, std::ifstream, std::stringstream>;
   stream_type fin(in, std::ios_base::in);
@@ -59,7 +59,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   fin >> std::noskipws;
   check_stream(fin);
   fout << tr;
-  obstream bout = fout;
+  obstream bout(fout);
   while (fin >> tmp_char) {
     bout << tr.get_code(to_char_t(tmp_char));
   }
@@ -68,8 +68,8 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void encode(char const* in, char const* out) {
   std::ofstream fout(out, std::ios_base::out);
   check_stream(fout);
@@ -78,8 +78,8 @@ void encode(char const* in, char const* out) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 std::string encode(std::string const& str) {
   std::stringstream sout(std::ios_base::out);
   encode<code_t, false>(str.c_str(), sout);
@@ -87,8 +87,8 @@ std::string encode(std::string const& str) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
   weight_t len;
   std::string tmp;
@@ -100,8 +100,8 @@ static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 static void read_used_codes(ibstream& bin, tree<code_t>& tr, size_t cnt) {
   char letter;
   weight_t len;
@@ -114,12 +114,12 @@ static void read_used_codes(ibstream& bin, tree<code_t>& tr, size_t cnt) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void decode(std::basic_istream<char>& fin,
             std::basic_ostream<char>& fout = std::cout) {
   tree<code_t> tr;
-  ibstream bin = fin;
+  ibstream bin(fin);
   char tmp;
   int imode = MODES::UNKNOWN;
   bin >> imode;
@@ -157,8 +157,8 @@ void decode(std::basic_istream<char>& fin,
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void decode(char const* in, std::basic_ostream<char>& fout = std::cout) {
   std::ifstream fin(in, std::ios_base::in);
   check_stream(fin);
@@ -167,8 +167,8 @@ void decode(char const* in, std::basic_ostream<char>& fout = std::cout) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void decode(std::basic_istream<char>* fin, char const* out) {
   std::ofstream fout(out, std::ios_base::out);
   check_stream(fout);
@@ -177,8 +177,8 @@ void decode(std::basic_istream<char>* fin, char const* out) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void decode(char const* in, char const* out) {
   std::ofstream fout(out, std::ios_base::out);
   check_stream(fout);
@@ -187,8 +187,8 @@ void decode(char const* in, char const* out) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*>::type = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 std::string decode(std::string const& str) {
   std::stringstream sin(str, std::ios_base::in);
   std::stringstream sout(std::ios_base::out);

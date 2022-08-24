@@ -40,7 +40,7 @@ struct obstream {
   obstream& operator<<(bool);
 
   template <typename T,
-      typename std::enable_if_t<std::is_integral_v<T>, void*> = nullptr>
+      typename std::enable_if<std::is_integral<T>::value, void*>::type = nullptr>
   void print_int(T const& x) {
     if (mod == BYTESIZE) {
       buf += tmp_char;

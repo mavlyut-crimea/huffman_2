@@ -26,7 +26,7 @@ enum MODES : int {
 
 MODES to_mode(int x) {
   if (x < -2) return UNKNOWN;
-  if (x < 0) return MODES{x};
+  if (x < 0) return static_cast<MODES>(x);
   if (x <= MAX_SIZE) return USED;
   return UNKNOWN;
 }
@@ -45,8 +45,8 @@ constexpr static size_t count_of_digits(size_t x) {
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
-    typename std::enable_if_t<std::is_base_of_v<huffman_code_type, code_t>
-        && !std::is_same_v<huffman_code_type, code_t>, void*> = nullptr>
+    typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
+        && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 struct tree {
   tree() : cnt_used(0), root(new node()),
         weights(std::vector<weight_t>(MAX_SIZE, 0)),

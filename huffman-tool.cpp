@@ -132,9 +132,6 @@ static const std::map<char, std::string> flags = {
     { 's', "ct=string" },
     { 'I', "ct=vector_ints" },
     { 'b', "ct=vector_bool" },
-    { 'A', "mode=all" },
-    { 'U', "mode=used" },
-    { 'D', "mode=default" }
 };
 
 int main(int argc, char** argv) {
@@ -151,11 +148,6 @@ int main(int argc, char** argv) {
               << "\t-d, --decompress          decode file\n"
               << "\t-i, --input FILE_IN       input file\n"
               << "\t-o, --output FILE_OUT     output file\n"
-              << "\n\tCOMPRESS_MODE:\n"
-              << "\t\t-A, --mode=all            write codes of all chars in CODE_TABLE\n"
-              << "\t\t-U, --mode=used           write codes of used chars in CODE_TABLE\n"
-              << "\t\t-D, --mode=default        (default compress mode) "
-              << "use mode (a or u) which is more optimal\n"
               << "\n\tCODE_TYPE_DEFAULT:\n"
               << "\t\t-s, --ct=string                           (default code type)\n"
               << "\t\t-I, --ct=vector_ints (8 | 16 | 32 | 64)   (it doesn't always work correctly)\n"
