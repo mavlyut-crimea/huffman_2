@@ -7,7 +7,7 @@
 using namespace huffman_code_type_examples;
 
 MODES get_mode_from_file(char const* name) {
-  std::ifstream fin(name);
+  std::ifstream fin(name, std::ios_base::in);
   int mode;
   fin >> mode;
   fin.close();
@@ -21,7 +21,7 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
 }
 
 void ASSERT_EQ_FILES(char const* in1, char const* in2) {
-    std::ifstream fin1(in1), fin2(in2);
+    std::ifstream fin1(in1, std::ios_base::in), fin2(in2, std::ios_base::in);
     char tmp1 = 0, tmp2 = 0;
     while (!fin1.eof() && !fin2.eof()) {
       fin1 >> tmp1;
@@ -29,6 +29,8 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
       ASSERT_TRUE(tmp1 == tmp2);
     }
     ASSERT_TRUE(fin1.eof() && fin2.eof());
+    fin1.close();
+    fin2.close();
 }
 
 const std::string path = std::string(std::filesystem::current_path()) + "/unit-tests";
