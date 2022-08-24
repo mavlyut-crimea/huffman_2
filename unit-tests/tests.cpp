@@ -43,11 +43,11 @@ void htest(std::string const& input, bool log = false) {
   std::string in = path + "/files/" + input;
   std::string enc = path + input + "_" + name_of_type + ".huf";
   std::string dec = path + input + "_" + name_of_type + "_decomp";
-  time_t t1 = std::time(nullptr);
+//   time_t t1 = std::time(nullptr);
   encode<T>(in.c_str(), enc.c_str());
-  time_t t2 = std::time(nullptr);
+//   time_t t2 = std::time(nullptr);
   decode<T>(enc.c_str(), dec.c_str());
-  time_t t3 = std::time(nullptr);
+//   time_t t3 = std::time(nullptr);
   size_t s1 = std::filesystem::file_size(in);
   size_t s2 = std::filesystem::file_size(enc);
   size_t s3 = std::filesystem::file_size(dec);
@@ -58,8 +58,8 @@ void htest(std::string const& input, bool log = false) {
               << ", encoded_file size: " << s2
               << ", encode mode: " << get_mode_from_file(enc.c_str())
               << ", compression ratio: " << coef << "\n";
-    std::cout << "Encode time: " << t2 - t1 << "s\n";
-    std::cout << "Decode time: " << t3 - t2 << "s\n\n";
+//     std::cout << "Encode time: " << t2 - t1 << "s\n";
+//     std::cout << "Decode time: " << t3 - t2 << "s\n\n";
   }
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
   if (s2 != 0) {
