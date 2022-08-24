@@ -55,7 +55,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     return;
   }
   tr.build_tree();
-  fin = stream_type(in, std::ios_base::in);
+  fin.open(in, std::ios_base::in);
   fin >> std::noskipws;
   check_stream(fin);
   fout << tr;
