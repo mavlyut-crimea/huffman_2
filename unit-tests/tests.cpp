@@ -164,6 +164,8 @@ HTEST(java_tutorial)
 
 // 5 Mb, 788 Kb, 947 b
 HTEST(organic_chemistry_in_4_volumes)
+  
+#ifdef _ENABLE_BIG_TESTS
 
 // 16 Mb, 651 Mb, 365 b
 HTEST(AAA)
@@ -200,3 +202,5 @@ TEST(bigfile, ct_default) {
   fout.close();
   htest<ct_default>("bigfile");
 }
+
+#endif
