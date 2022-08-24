@@ -44,7 +44,7 @@ void htest(std::string const& input, bool log = false) {
   std::string enc = path + input + "_" + name_of_type + ".huf";
   std::string dec = path + input + "_" + name_of_type + "_decomp";
 //   time_t t1 = std::time(nullptr);
-  encode<T>(in.c_str(), enc.c_str());
+//   encode<T>(in.c_str(), enc.c_str());
 //   time_t t2 = std::time(nullptr);
 //   decode<T>(enc.c_str(), dec.c_str());
 //   time_t t3 = std::time(nullptr);
