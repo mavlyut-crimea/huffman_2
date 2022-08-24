@@ -21,8 +21,6 @@ set(lib_huffman
         huffman_lib/huffman_codes_examples/ct_vector_bool.cpp
         )
 
-#add_definitions(-D_SFO)
-
 add_executable(huffman-tool ${lib_huffman} huffman-tool.cpp)
 
 add_executable(tests ${lib_huffman} unit-tests/tests.cpp)
@@ -45,6 +43,7 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
+  add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
 target_link_libraries(tests GTest::gtest GTest::gtest_main)
