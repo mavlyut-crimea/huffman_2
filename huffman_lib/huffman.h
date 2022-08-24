@@ -5,11 +5,12 @@
 #ifndef HUFFMAN_HUFFMAN_H
 #define HUFFMAN_HUFFMAN_H
 
-#include "huffman_tree.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 #include <sstream>
+
+#include "huffman_tree.h"
 
 static void check_stream(std::basic_ios<char> const& stream) {
   if (!stream.good()) {
@@ -17,17 +18,28 @@ static void check_stream(std::basic_ios<char> const& stream) {
   }
 }
 
-template <typename T,
-    typename std::enable_if<!std::is_same<T, std::stringstream>::value, void*>::type = nullptr>
-static void end_work(T& x) {
-  x.close();
-}
+template <typename T>
+struct hstream {
+  static void start_work(T& x, char const* in) {
+    x.open(in, std::ios_base::in);
+  }
 
-template <typename T,
-    typename std::enable_if<std::is_same<T, std::stringstream>::value, void*>::type = nullptr>
-static void end_work(T& x) {
-  x.clear();
-}
+  static void end_work(T& x) {
+    x.close();
+  }
+};
+
+template <>
+struct hstream<std::stringstream> {
+  static void start_work(std::stringstream& x, char const* in) {
+    x.clear();
+    x = std::stringstream(in, std::ios_base::in);
+  }
+
+  static void end_work(std::stringstream& x) {
+    x.clear();
+  }
+};
 
 template <typename code_t = huffman_code_type_examples::ct_default,
     bool read_from_file = true,
@@ -35,7 +47,8 @@ template <typename code_t = huffman_code_type_examples::ct_default,
         && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void encode(char const* in, std::basic_ostream<char>& fout) {
   using stream_type = std::conditional_t<read_from_file, std::ifstream, std::stringstream>;
-  stream_type fin(in, std::ios_base::in);
+  stream_type fin;
+  hstream<stream_type>::start_work(fin, in);
   fin >> std::noskipws;
   check_stream(fin);
   tree<code_t> tr;
@@ -43,7 +56,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   while (fin >> tmp_char) {
     tr.inc(to_char_t(tmp_char));
   }
-  end_work<stream_type>(fin);
+  hstream<stream_type>::end_work(fin);
   if (tr.get_cnt_used() == 1) {
     fout << MODES::ONE_CHAR << '\n';
     for (size_t i = 0; i < MAX_SIZE; i++) {
@@ -55,7 +68,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     return;
   }
   tr.build_tree();
-  fin.open(in, std::ios_base::in);
+  hstream<stream_type>::start_work(fin, in);
   fin >> std::noskipws;
   check_stream(fin);
   fout << tr;
@@ -64,7 +77,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     bout << tr.get_code(to_char_t(tmp_char));
   }
   bout.flush();
-  end_work<stream_type>(fin);
+  hstream<stream_type>::end_work(fin);
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
