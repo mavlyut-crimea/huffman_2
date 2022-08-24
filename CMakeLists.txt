@@ -43,6 +43,7 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
+elseif (CMAKE_BUILD_TYPE MATCHES "Release")
   add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
