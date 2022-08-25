@@ -5,7 +5,49 @@
 #include "bstream.h"
 
 #define NEED_READ 100
-#define BUFSIZE 4096
+#define BUFSIZE BUFSIZ
+
+/// buffered reader
+buffered_reader::buffered_reader(std::basic_istream<char>& in)
+    : pos(0), cnt(0), buf(BUFSIZE), in(in >> std::noskipws) {
+  check();
+}
+
+buffered_reader::~buffered_reader() = default;
+
+buffered_reader& buffered_reader::operator>>(char& x) {
+  x = buf[pos++];
+  check();
+  return *this;
+}
+
+buffered_reader& buffered_reader::operator>>(size_t& x) {
+  x = 0;
+  if (buf[pos] < '0' || buf[pos] > '9') {
+    throw std::runtime_error("can't parse empty string");
+  }
+  char tmp;
+  while (!eof() && buf[pos] >= '0' && buf[pos] <= '9') {
+    *this >> tmp;
+    (x *= 10) += tmp - '0';
+  }
+  return *this;
+}
+
+bool buffered_reader::eof() const {
+  return cnt == 0;
+}
+
+buffered_reader::operator bool() const {
+  return in.operator bool();
+}
+
+void buffered_reader::check() {
+  if (pos == cnt) {
+    cnt = in.readsome(&buf[0], BUFSIZE);
+    pos = 0;
+  }
+}
 
 /// ibstream
 
@@ -25,34 +67,19 @@ ibstream& ibstream::operator>>(char& x) {
 ibstream& ibstream::operator>>(bool& x) {
   if (!mod || mod == NEED_READ) {
     if (mod == NEED_READ) {
-      in >> next_char >> next_next_char;
+      in >> next_char;
     }
     tmp_char = next_char;
-    next_char = next_next_char;
-    in >> next_next_char;
+    in >> next_char;
     if (in.eof()) {
       eof = true;
       last_byte = true;
-      mod = next_next_char - '0';
+      mod = next_char - '0';
     } else {
       mod = BYTESIZE;
     }
   }
   x = (tmp_char >> (--mod)) & 1;
-  return *this;
-}
-
-ibstream& ibstream::operator>>(int& x) {
-  // for entering mode
-  char ws;
-  if (in >> x) {
-    in >> ws;
-  } else {
-    throw std::runtime_error("File was broken: no mode");
-  }
-  if (in.eof()) {
-    eof = true;
-  }
   return *this;
 }
 

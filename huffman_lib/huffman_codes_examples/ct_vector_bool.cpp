@@ -2,8 +2,9 @@
 // Created by mavlyut on 24.07.22.
 //
 
-#include "../huffman_code.h"
 #include <sstream>
+
+#include "../huffman_code.h"
 
 using huffman_code_type_examples::ct_vector_bool;
 

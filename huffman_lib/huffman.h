@@ -47,16 +47,16 @@ template <typename code_t = huffman_code_type_examples::ct_default,
         && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void encode(char const* in, std::basic_ostream<char>& fout) {
   using stream_type = std::conditional_t<read_from_file, std::ifstream, std::stringstream>;
+  using worker = hstream<stream_type>;
   stream_type fin;
-  hstream<stream_type>::start_work(fin, in);
-  fin >> std::noskipws;
-  check_stream(fin);
+  worker::start_work(fin, in);
+  check_stream(fin >> std::noskipws);
   tree<code_t> tr;
   char tmp_char;
   while (fin >> tmp_char) {
     tr.inc(to_char_t(tmp_char));
   }
-  hstream<stream_type>::end_work(fin);
+  worker::end_work(fin);
   if (tr.get_cnt_used() == 1) {
     fout << MODES::ONE_CHAR << '\n';
     for (size_t i = 0; i < MAX_SIZE; i++) {
@@ -68,7 +68,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     return;
   }
   tr.build_tree();
-  hstream<stream_type>::start_work(fin, in);
+  worker::start_work(fin, in);
   fin >> std::noskipws;
   check_stream(fin);
   fout << tr;
@@ -77,7 +77,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
     bout << tr.get_code(to_char_t(tmp_char));
   }
   bout.flush();
-  hstream<stream_type>::end_work(fin);
+  worker::end_work(fin);
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
@@ -132,14 +132,17 @@ template <typename code_t = huffman_code_type_examples::ct_default,
 void decode(std::basic_istream<char>& fin,
             std::basic_ostream<char>& fout = std::cout) {
   tree<code_t> tr;
-  ibstream bin(fin);
   char tmp;
   int imode = MODES::UNKNOWN;
-  bin >> imode;
+  if (!(fin >> std::noskipws >> imode)) {
+    throw std::runtime_error("File was broken: no mode");
+  }
+  fin >> tmp; // ws
   if (imode == 0) {
     return;
   }
   MODES mode = to_mode(imode);
+  ibstream bin(fin);
   if (mode == MODES::ONE_CHAR) {
     weight_t cnt;
     fin >> tmp >> cnt;

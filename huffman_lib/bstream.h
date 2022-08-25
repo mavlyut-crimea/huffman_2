@@ -7,8 +7,29 @@
 
 #include <iostream>
 #include <type_traits>
+#include <vector>
 
 #define BYTESIZE 8
+
+struct buffered_reader {
+  buffered_reader(std::basic_istream<char>& = std::cin);
+  buffered_reader(buffered_reader const&) = delete;
+  buffered_reader& operator=(buffered_reader const&) = delete;
+  ~buffered_reader();
+
+  buffered_reader& operator>>(char&);
+  buffered_reader& operator>>(size_t&);
+  bool eof() const;
+  explicit operator bool() const;
+
+private:
+  size_t pos;
+  size_t cnt;
+  std::vector<char> buf;
+  std::basic_istream<char>& in;
+
+  void check();
+};
 
 struct ibstream {
   ibstream(std::basic_istream<char>& = std::cin);
@@ -19,14 +40,13 @@ struct ibstream {
   ibstream& operator>>(char&);
   ibstream& operator>>(bool&);
   ibstream& operator>>(size_t&);
-  ibstream& operator>>(int&);
   explicit operator bool() const;
 
 private:
-  char tmp_char, next_char, next_next_char;
+  char tmp_char, next_char;
   bool eof, last_byte;
   size_t mod;
-  std::basic_istream<char>& in;
+  buffered_reader in;
 };
 
 std::string read_bin_string(ibstream&, size_t, bool = false);
