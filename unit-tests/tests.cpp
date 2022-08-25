@@ -34,7 +34,7 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
     fin2.close();
 }
 
-const std::string path = std::string(std::filesystem::current_path()) + "/unit-tests";
+const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
 
 template <typename T>
 void htest(std::string const& input) {
@@ -46,8 +46,8 @@ void htest(std::string const& input) {
   std::cout << name_of_type << "_" << input << "_Test\n";
 #endif
   std::string in = path + "/files/" + input;
-  std::string enc = path + input + "_" + name_of_type + ".huf";
-  std::string dec = path + input + "_" + name_of_type + "_decomp";
+  std::string enc = path + "/" + input + "_" + name_of_type + ".huf";
+  std::string dec = path + "/" + input + "_" + name_of_type + "_decomp";
 #ifdef LOG
   time_t t1 = std::time(nullptr);
 #endif
@@ -75,6 +75,8 @@ void htest(std::string const& input) {
 #endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
   ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
+  std::filesystem::remove(enc);
+  std::filesystem::remove(dec);
 }
 
 #define HTEST(input)                            \
@@ -178,23 +180,27 @@ static char get(size_t i) {
 
 // 63 Mb, 1023 Kb, 1023 b
 TEST(full_abacaba, ct_default) {
-  std::ofstream fout(path + "/files/full_abacaba", std::ios_base::out);
+  std::string new_path = path + "/files/full_abacaba";
+  std::ofstream fout(new_path, std::ios_base::out);
   size_t end = (1L << ALPHABET_SIZE) - 1;
   for (size_t i = 0; i < end; i++) {
     fout << get(i);
   }
   htest<ct_default>("full_abacaba");
+  std::filesystem::remove(new_path);
 }
 
 // 1 Gb
 TEST(bigfile, ct_default) {
   srand(time(nullptr));
-  std::ofstream fout(path + "/files/bigfile", std::ios_base::out);
+  std::string new_path = path + "/files/bigfile";
+  std::ofstream fout(new_path, std::ios_base::out);
   for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
     fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
   }
   fout.close();
   htest<ct_default>("bigfile");
+  std::filesystem::remove(new_path);
 }
 
 #endif
