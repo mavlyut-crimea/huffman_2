@@ -43,8 +43,10 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
-  add_definitions(-DLOG)
-elseif (CMAKE_BUILD_TYPE MATCHES "Release" AND NOT USE_SANITIZERS)
+  if (NOT USE_SANITIZERS)
+    add_definitions(-DLOG)
+  endif()
+elseif (CMAKE_BUILD_TYPE MATCHES "Release")
   add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
