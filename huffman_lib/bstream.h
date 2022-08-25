@@ -44,7 +44,6 @@ struct ibstream {
 
 private:
   char tmp_char, next_char;
-  bool eof, last_byte;
   size_t mod;
   buffered_reader in;
 };

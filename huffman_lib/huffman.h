@@ -134,10 +134,9 @@ void decode(std::basic_istream<char>& fin,
   tree<code_t> tr;
   char tmp;
   int imode = MODES::UNKNOWN;
-  if (!(fin >> std::noskipws >> imode)) {
+  if (!(fin >> std::noskipws >> imode >> tmp)) {
     throw std::runtime_error("File was broken: no mode");
   }
-  fin >> tmp; // ws
   if (imode == 0) {
     return;
   }

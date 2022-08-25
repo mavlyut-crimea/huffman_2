@@ -130,9 +130,6 @@ TEST(special, broken_all_mode) {
 // 0
 HTEST(empty)
 
-// 127 b
-HTEST(simple)
-
 // 1 Kb, 165 b
 HTEST(i_said_everything_i_wanted)
 
