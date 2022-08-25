@@ -140,7 +140,7 @@ HTEST(i_said_everything_i_wanted)
 HTEST(imo2022_chinese)
 
 // 21 Kb, 667 b
-// HTEST(test_elf)
+HTEST(test_elf)
 
 // 62 Kb, 839 b
 HTEST(war_and_peace_wiki)
