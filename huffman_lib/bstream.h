@@ -17,8 +17,8 @@ struct buffered_reader {
   buffered_reader& operator=(buffered_reader const&) = delete;
   ~buffered_reader();
 
-  buffered_reader& operator>>(char&);
-  buffered_reader& operator>>(size_t&);
+  void read(char&);
+  bool read(size_t&);
   bool eof() const;
   explicit operator bool() const;
 
@@ -37,9 +37,9 @@ struct ibstream {
   ibstream& operator=(ibstream const&) = delete;
   ~ibstream();
 
-  ibstream& operator>>(char&);
-  ibstream& operator>>(bool&);
-  ibstream& operator>>(size_t&);
+  void read(char&);
+  void read(bool&);
+  void read(size_t&);
   explicit operator bool() const;
 
 private:
@@ -56,7 +56,7 @@ struct obstream {
   obstream& operator=(obstream const&) = delete;
   ~obstream();
 
-  obstream& operator<<(bool);
+  void print(bool);
 
   template <typename T,
       typename std::enable_if<std::is_integral<T>::value, void*>::type = nullptr>

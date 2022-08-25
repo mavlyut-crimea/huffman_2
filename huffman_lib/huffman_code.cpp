@@ -40,7 +40,7 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
 
 void huffman_code_type::print(obstream& bout) const {
   for (size_t i = 0; i < size(); i++) {
-    bout << operator[](i);
+    bout.print(operator[](i));
   }
 }
 

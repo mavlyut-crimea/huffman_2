@@ -2,6 +2,8 @@
 // Created by mavlyut on 03.08.22.
 //
 
+#include <cstring>
+
 #include "bstream.h"
 
 #define NEED_READ 100
@@ -16,22 +18,21 @@ buffered_reader::buffered_reader(std::basic_istream<char>& in)
 
 buffered_reader::~buffered_reader() = default;
 
-buffered_reader& buffered_reader::operator>>(char& x) {
+void buffered_reader::read(char& x) {
   x = buf[pos++];
   check();
-  return *this;
 }
 
-buffered_reader& buffered_reader::operator>>(size_t& x) {
+bool buffered_reader::read(size_t& x) {
   x = 0;
   if (buf[pos] < '0' || buf[pos] > '9') {
-    throw std::runtime_error("can't parse empty string");
+    return false;
   }
   while (!eof() && buf[pos] >= '0' && buf[pos] <= '9') {
     (x *= 10) += buf[pos++] - '0';
     check();
   }
-  return *this;
+  return true;
 }
 
 bool buffered_reader::eof() const {
@@ -56,18 +57,17 @@ ibstream::ibstream(std::basic_istream<char>& in)
 
 ibstream::~ibstream() = default;
 
-ibstream& ibstream::operator>>(char& x) {
-  in >> x;
-  return *this;
+void ibstream::read(char& x) {
+  in.read(x);
 }
 
-ibstream& ibstream::operator>>(bool& x) {
+void ibstream::read(bool& x) {
   if (!mod || mod == NEED_READ) {
     if (mod == NEED_READ) {
-      in >> next_char;
+      in.read(next_char);
     }
     tmp_char = next_char;
-    in >> next_char;
+    in.read(next_char);
     if (in.eof()) {
       mod = next_char - '0';
     } else {
@@ -75,17 +75,15 @@ ibstream& ibstream::operator>>(bool& x) {
     }
   }
   x = (tmp_char >> (--mod)) & 1;
-  return *this;
 }
 
-ibstream& ibstream::operator>>(size_t& x) {
+void ibstream::read(size_t& x) {
   char ws = 0;
-  if (in >> x) {
-    in >> ws;
+  if (in.read(x)) {
+    in.read(ws);
   } else {
     throw std::runtime_error("File was broken: no integers");
   }
-  return *this;
 }
 
 std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
@@ -93,19 +91,19 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
   std::string ans;
   char tmp = 0;
   for (size_t i = 0; i < len / BYTESIZE; i++) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (len % BYTESIZE) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = len % BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (need_endl) {
-    bin >> tmp;
+    bin.read(tmp);
   }
   return ans;
 }
@@ -123,7 +121,7 @@ obstream::~obstream() {
   flush();
 }
 
-obstream& obstream::operator<<(bool x) {
+void obstream::print(bool x) {
   if (mod == BYTESIZE) {
     append(tmp_char);
     tmp_char = 0;
@@ -134,7 +132,6 @@ obstream& obstream::operator<<(bool x) {
     tmp_char++;
   }
   mod++;
-  return *this;
 }
 
 void obstream::flush() {
