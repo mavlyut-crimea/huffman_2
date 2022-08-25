@@ -26,10 +26,9 @@ buffered_reader& buffered_reader::operator>>(size_t& x) {
   if (buf[pos] < '0' || buf[pos] > '9') {
     throw std::runtime_error("can't parse empty string");
   }
-  char tmp;
   while (!eof() && buf[pos] >= '0' && buf[pos] <= '9') {
-    *this >> tmp;
-    (x *= 10) += tmp - '0';
+    (x *= 10) += buf[pos++] - '0';
+    check();
   }
   return *this;
 }
@@ -79,7 +78,8 @@ ibstream& ibstream::operator>>(bool& x) {
       mod = BYTESIZE;
     }
   }
-  x = (tmp_char >> (--mod)) & 1;
+  mod--;
+  x = (tmp_char >> mod) & 1;
   return *this;
 }
 
