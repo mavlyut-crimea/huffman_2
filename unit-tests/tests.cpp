@@ -1,8 +1,9 @@
-#include "gtest/gtest.h"
-#include "../huffman_lib/huffman.h"
 #include <ctime>
 #include <cmath>
 #include <filesystem>
+
+#include "gtest/gtest.h"
+#include "../huffman_lib/huffman.h"
 
 using namespace huffman_code_type_examples;
 
@@ -129,9 +130,6 @@ TEST(special, broken_all_mode) {
 // 0
 HTEST(empty)
 
-// 7 b
-HTEST(one_char)
-
 // 127 b
 HTEST(simple)
 
@@ -164,7 +162,7 @@ HTEST(java_tutorial)
 
 // 5 Mb, 788 Kb, 947 b
 HTEST(organic_chemistry_in_4_volumes)
-  
+
 #ifdef _ENABLE_BIG_TESTS
 
 // 16 Mb, 651 Mb, 365 b
@@ -183,7 +181,6 @@ static char get(size_t i) {
 
 // 63 Mb, 1023 Kb, 1023 b
 TEST(full_abacaba, ct_default) {
-  srand(time(nullptr));
   std::ofstream fout(path + "/files/full_abacaba", std::ios_base::out);
   size_t end = (1L << ALPHABET_SIZE) - 1;
   for (size_t i = 0; i < end; i++) {
