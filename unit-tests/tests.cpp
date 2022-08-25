@@ -34,7 +34,7 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
     fin2.close();
 }
 
-const std::string path = std::string(std::filesystem::current_path()) + "/../unit-tests";
+const std::string path = std::string(std::filesystem::current_path()) + "/unit-tests";
 
 template <typename T>
 void htest(std::string const& input) {
