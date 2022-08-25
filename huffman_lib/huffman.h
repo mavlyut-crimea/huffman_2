@@ -142,7 +142,6 @@ void decode(std::basic_istream<char>& fin,
     return;
   }
   MODES mode = to_mode(imode);
-  ibstream bin(fin);
   if (mode == MODES::ONE_CHAR) {
     weight_t cnt;
     fin >> tmp >> cnt;
@@ -150,7 +149,9 @@ void decode(std::basic_istream<char>& fin,
       fout << tmp;
     }
     return;
-  } else if (mode == MODES::ALL) {
+  }
+  ibstream bin(fin);
+  if (mode == MODES::ALL) {
     read_all_codes(bin, tr);
   } else if (mode == MODES::USED) {
     read_used_codes(bin, tr, imode);
