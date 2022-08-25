@@ -73,7 +73,7 @@ ibstream& ibstream::operator>>(bool& x) {
     if (in.eof()) {
       eof = true;
       last_byte = true;
-      mod = static_cast<size_t>(next_char - '0');
+      mod = std::min(0, std::max(BYTESIZE, next_char - '0'));
     } else {
       mod = BYTESIZE;
     }
