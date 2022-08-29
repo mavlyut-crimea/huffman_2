@@ -3,6 +3,7 @@
 //
 
 #include <cstring>
+#include <cassert>
 
 #include "bstream.h"
 
@@ -74,6 +75,7 @@ void ibstream::read(bool& x) {
       mod = BYTESIZE;
     }
   }
+  assert(mod >= 1 && mod <= BYTESIZE);
   x = (tmp_char >> (--mod)) & 1;
 }
 
