@@ -99,35 +99,35 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-TEST(special, file_not_found) {
-  ASSERT_THROW(encode("", ""), std::runtime_error);
-}
+// TEST(special, file_not_found) {
+//   ASSERT_THROW(encode("", ""), std::runtime_error);
+// }
 
-TEST(special, empty_string) {
-//   I still don't agree, I want to implement EFO!
-  ASSERT_NE(encode(std::string("")), "");
-}
+// TEST(special, empty_string) {
+// //   I still don't agree, I want to implement EFO!
+//   ASSERT_NE(encode(std::string("")), "");
+// }
 
-TEST(special, simple) {
-  std::string str("abacaba");
-  ASSERT_EQ(decode(encode(str)), str);
-}
+// TEST(special, simple) {
+//   std::string str("abacaba");
+//   ASSERT_EQ(decode(encode(str)), str);
+// }
 
-TEST(special, unknown_mode) {
-  ASSERT_ANY_THROW(decode("-120\nhrknf"));
-}
+// TEST(special, unknown_mode) {
+//   ASSERT_ANY_THROW(decode("-120\nhrknf"));
+// }
 
-TEST(special, no_mode) {
-  ASSERT_ANY_THROW(decode("hello world, i want error\n"));
-}
+// TEST(special, no_mode) {
+//   ASSERT_ANY_THROW(decode("hello world, i want error\n"));
+// }
 
-TEST(special, no_mode_2) {
-  ASSERT_ANY_THROW(decode("текст на русском\n"));
-}
+// TEST(special, no_mode_2) {
+//   ASSERT_ANY_THROW(decode("текст на русском\n"));
+// }
 
-TEST(special, broken_all_mode) {
-  ASSERT_ANY_THROW(decode("-1\n"));
-}
+// TEST(special, broken_all_mode) {
+//   ASSERT_ANY_THROW(decode("-1\n"));
+// }
 
 // 0
 HTEST(empty)
