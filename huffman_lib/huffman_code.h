@@ -5,6 +5,7 @@
 #ifndef HUFFMAN_HUFFMAN_CODE_H
 #define HUFFMAN_HUFFMAN_CODE_H
 
+#include <ctime>
 #include <ostream>
 #include <vector>
 
@@ -25,10 +26,11 @@ struct huffman_code_type {
   virtual bool operator[](size_t) const = 0;
 };
 
-std::basic_ostream<char>& operator<<(std::basic_ostream<char>&, huffman_code_type const&);
-obstream& operator<<(obstream&, huffman_code_type const&);
+void print(std::basic_ostream<char>&, huffman_code_type const&);
 
 namespace huffman_code_type_examples {
+  static size_t stime = 0;
+
   struct ct_string : huffman_code_type {
     ct_string();
     ~ct_string() override;
@@ -104,12 +106,15 @@ namespace huffman_code_type_examples {
     }
 
     void print_optimized(obstream& bout) const override {
+      time_t t0 = std::time(nullptr);
       for (size_t i = 0; i < _vec.size() - 1; i++) {
         bout.print_int<_int_type>(_vec[i]);
       }
       for (size_t i = pos_end; i --> 0; ) {
         bout.print((_vec.back() >> i) & 1);
       }
+      time_t t1 = std::time(nullptr);
+      stime += t1 - t0;
     }
 
   private:

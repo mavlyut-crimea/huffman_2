@@ -8,20 +8,25 @@
 #include "bstream.h"
 
 #define NEED_READ 100
-#define BUFSIZE BUFSIZ
+#define BUFSIZE 4096
+#define BASE 10
 
 /// buffered reader
 
 buffered_reader::buffered_reader(std::basic_istream<char>& in)
-    : pos(0), cnt(0), buf(BUFSIZE), in(in >> std::noskipws) {
+    : pos(0), cnt(0), buf(BUFSIZE, 0), in(in >> std::noskipws) {
   check();
 }
 
 buffered_reader::~buffered_reader() = default;
 
-void buffered_reader::read(char& x) {
+bool buffered_reader::read(char& x) {
+  if (eof()) {
+    return false;
+  }
   x = buf[pos++];
   check();
+  return true;
 }
 
 bool buffered_reader::read(size_t& x) {
@@ -30,7 +35,7 @@ bool buffered_reader::read(size_t& x) {
     return false;
   }
   while (!eof() && buf[pos] >= '0' && buf[pos] <= '9') {
-    (x *= 10) += buf[pos++] - '0';
+    (x *= BASE) += buf[pos++] - '0';
     check();
   }
   return true;
@@ -71,6 +76,7 @@ void ibstream::read(bool& x) {
     in.read(next_char);
     if (in.eof()) {
       mod = next_char - '0';
+      assert(next_char >= '1' && next_char <= '8');
     } else {
       mod = BYTESIZE;
     }
@@ -137,6 +143,9 @@ void obstream::print(bool x) {
 }
 
 void obstream::flush() {
+  if (buf.empty()) {
+    return;
+  }
   out << buf;
   if (mod) {
     out << tmp_char << mod;
@@ -148,7 +157,7 @@ void obstream::flush() {
 }
 
 void obstream::append(char ch) {
-  buf += ch;
+  buf.push_back(ch);
   if (buf.size() > BUFSIZE) {
     out << buf;
     buf.clear();

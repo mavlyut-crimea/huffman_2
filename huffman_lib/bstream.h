@@ -17,15 +17,15 @@ struct buffered_reader {
   buffered_reader& operator=(buffered_reader const&) = delete;
   ~buffered_reader();
 
-  void read(char&);
-  bool read(size_t&);
+  bool read(char&);
+  bool read(size_t&); //
   bool eof() const;
   explicit operator bool() const;
 
 private:
   size_t pos;
   size_t cnt;
-  std::vector<char> buf;
+  std::string buf;
   std::basic_istream<char>& in;
 
   void check();
@@ -62,7 +62,7 @@ struct obstream {
       typename std::enable_if<std::is_integral<T>::value, void*>::type = nullptr>
   void print_int(T const& x) {
     if (mod == BYTESIZE) {
-      buf += tmp_char;
+      buf.push_back(tmp_char);
       mod = 0;
     }
     size_t bitcnt = sizeof(T) * BYTESIZE;
@@ -87,8 +87,8 @@ struct obstream {
 private:
   size_t mod;
   char tmp_char;
-  std::basic_ostream<char>& out;
   std::string buf;
+  std::basic_ostream<char>& out;
 
   void append(char);
 };
