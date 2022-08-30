@@ -56,7 +56,6 @@ struct tree {
     clear(get_root());
     weights.clear();
     codes.clear();
-    std::cout << "Get code: " << sum_time << "s\n";
   }
 
   void inc(char_t x) {
@@ -66,11 +65,7 @@ struct tree {
   }
 
   code_t const& get_code(char_t x) const {
-    time_t ts = std::time(nullptr);
-    code_t const& ans = *(codes.begin() + x);
-    time_t te = std::time(nullptr);
-    const_cast<size_t&>(sum_time) += te - ts;
-    return ans;
+    return *(codes.begin() + x);
   }
 
   void build_tree() {
@@ -167,7 +162,6 @@ private: // fields
   node root;
   std::vector<weight_t> weights;
   std::vector<code_t> codes;
-  size_t sum_time = 0;
 
 private: // methods
   void clear(node const* x) {
