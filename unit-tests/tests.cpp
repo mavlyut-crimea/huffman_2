@@ -34,6 +34,17 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
     fin2.close();
 }
 
+void cat_file(std::string const& path) {
+  std::cout << "\n__" + path + "__\n";
+  char tmp;
+  std::ifstream fin(path, std::ios_base::in);
+  fin >> std::noskipws;
+  while (fin >> tmp) {
+    std::cout << tmp;
+  }
+  std::cout << "\n__end__\n";
+}
+
 const std::string path = std::string(std::filesystem::current_path()) + "/unit-tests";
 
 template <typename T>
@@ -70,6 +81,9 @@ void htest(std::string const& input) {
   std::cout << "Decode time: " << t3 - t2 << "s\n\n";
   ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
 #endif
+  cat_file(in);
+  cat_file(enc);
+  cat_file(dec);
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
   std::filesystem::remove(enc);
   std::filesystem::remove(dec);
