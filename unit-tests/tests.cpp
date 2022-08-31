@@ -129,11 +129,58 @@ TEST(special, broken_all_mode) {
   ASSERT_ANY_THROW(decode("-1\n"));
 }
 
+TEST(special, capybara) {
+  std::string enc = encode("Я люблю капибар\n"
+           "I love capybaras\n"
+           "Ich liebe Wasserschweine\n"
+           "მე მიყვარს კაპიბარა\n"
+           "Λατρεύω τα capybaras\n"
+           "мен капибараны жақсы көремін\n"
+           "من عاشق کاپیبارا هستم\n"
+           "Ես սիրում եմ կապիբարա\n"
+           "Amo il capibara\n"
+           "me encanta capibara\n"
+           "Capybara amo\n"
+           "ฉันรักคาปิบาร่า\n"
+           "Я люблю капібар\n"
+           "Jeg elsker capybara\n"
+           "我愛水豚\n"
+           "waan jeclahay capybara\n"
+           "j'adore le capibara\n"
+           "Мин капыбараны яратам\n"
+           "Tha gaol agam air capybara\n"
+           "kocham kapibarę\n"
+           "kapibarayı severim\n"
+           "Mi amas kapibaron\n"
+           "カピバラ大好き\n"
+           "Ndimakonda capybara\n"
+           "මම කැපිබරාට ආදරෙයි\n"
+           "Jeg elsker capybara\n"
+           "אני אוהב קפיברה\n"
+           "أنا أحب كابيبارا\n"
+           "ငါ capybara ကိုချစ်တယ်။\n"
+           "Обичам капибара\n"
+           "Aš myliu kapibarą\n"
+           "Ech Léift Capybara\n"
+           "Tôi yêu capybara\n"
+           "Men kapibarani yaxshi ko'raman\n"
+           "Ek is mal oor capybara\n"
+           "मलाई capybara मन पर्छ\n"
+           "Melɔ̃a capybara ŋutɔ\n"
+           "Milujem kapybaru\n"
+           "Ndiyayithanda i-capybara\n"
+           "Rakastan capybaraa\n"
+           "মই কেপিবাৰাক ভাল পাওঁ\n"
+           "Capybara hi ka ngaina hle");
+  std::cout << enc << "\n_______\n";
+  std::cout << decode(enc) << "\n";
+}
+
 // 0
 HTEST(empty)
 
 // 1 Kb, 165 b
-// HTEST(i_said_everything_i_wanted)
+HTEST(i_said_everything_i_wanted)
 
 // 3 Kb, 167 b
 HTEST(imo2022_chinese)
