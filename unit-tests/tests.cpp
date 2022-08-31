@@ -133,7 +133,7 @@ TEST(special, broken_all_mode) {
 HTEST(empty)
 
 // 1 Kb, 165 b
-HTEST(i_said_everything_i_wanted)
+// HTEST(i_said_everything_i_wanted)
 
 // 3 Kb, 167 b
 HTEST(imo2022_chinese)
