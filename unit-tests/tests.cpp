@@ -38,11 +38,9 @@ const std::string path = std::string(std::filesystem::current_path()) + "/unit-t
 
 template <typename T>
 void htest(std::string const& input) {
-#ifdef LOG
-  std::cout << path << "\n";
-#endif
   std::string name_of_type(typeid(T).name());
 #ifdef LOG
+  std::cout << path << "\n";
   std::cout << name_of_type << "_" << input << "_Test\n";
 #endif
   std::string in = path + "/files/" + input;
@@ -58,23 +56,21 @@ void htest(std::string const& input) {
   decode<T>(enc.c_str(), dec.c_str());
 #ifdef LOG
   time_t t3 = std::time(nullptr);
-#endif
   size_t s1 = std::filesystem::file_size(in);
   size_t s2 = std::filesystem::file_size(enc);
   size_t s3 = std::filesystem::file_size(dec);
   ASSERT_TRUE(s2 > 0);
   ASSERT_EQ(s1, s3);
   double coef = static_cast<double>(s1) / static_cast<double>(s2);
-#ifdef LOG
   std::cout << "Start size: " << s1
             << ", encoded_file size: " << s2
             << ", encode mode: " << get_mode_from_file(enc.c_str())
             << ", compression ratio: " << coef << "\n";
   std::cout << "Encode time: " << t2 - t1 << "s\n";
   std::cout << "Decode time: " << t3 - t2 << "s\n\n";
+  ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
 #endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
-  ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
   std::filesystem::remove(enc);
   std::filesystem::remove(dec);
 }
