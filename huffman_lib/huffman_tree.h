@@ -63,7 +63,7 @@ struct tree {
     if (weights[x]++ == 0) {
       cnt_used++;
     }
-    std::cout << weights[x] << "\n";
+    std::cout << weights[x] << ", cnt: " << cnt_used << "\n";
   }
 
   code_t const& get_code(char_t x) const {
