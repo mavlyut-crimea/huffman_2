@@ -18,9 +18,8 @@ struct buffered_reader {
   ~buffered_reader();
 
   bool read(char&);
-  bool read(size_t&); //
+  bool read(size_t&);
   bool eof() const;
-  explicit operator bool() const;
 
 private:
   size_t pos;

@@ -17,9 +17,8 @@ buffered_reader::buffered_reader(std::basic_istream<char>& in)
     : pos(0), cnt(0), buf(BUFSIZE, 0), in(in >> std::noskipws) {
   std::cout << "constructor of buffered_reader" << in.operator bool() << "\n";
   check();
-  std::cout << cnt << "(expect > 0) \n";
+  std::cout << cnt << "(expect > 0 for non-empty files) \n";
 }
-
 
 buffered_reader::~buffered_reader() = default;
 
@@ -48,13 +47,9 @@ bool buffered_reader::eof() const {
   return cnt == 0;
 }
 
-buffered_reader::operator bool() const {
-  return in.operator bool();
-}
-
 void buffered_reader::check() {
   if (pos == cnt) {
-    cnt = in.readsome(&buf[0], BUFSIZE);
+    cnt = in.readsome(buf.data(), BUFSIZE);
     std::cout << "BUF: |";
     for (size_t i = 0; i < cnt; i++) {
       std::cout << buf[i];
