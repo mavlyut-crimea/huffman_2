@@ -115,7 +115,7 @@ TEST(test, write_to_file) {
   for (size_t i = 0; i < SZ; i++) {
     std::cout << i << "\n";
   }
-  std::vector<char> buf(SZ);
+  std::string buf(SZ, 0);
   fstr.open("input", std::ios::in);
   size_t cnt = fstr.readsome(&buf[0], SZ);
   for (size_t i = 0; i < cnt; i++) {
