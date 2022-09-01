@@ -193,12 +193,11 @@ private: // methods
   }
 
   bool a_mode_is_better() const {
-    return false;
     // Size_a = LEN + 3 * MAX_SIZE - cnt_used + 2
     // Size_u = LEN + MAX_SIZE + 2 * cnt_used + 1 + floor(log10(cnt_used) + 1)
     // So, a_mode is better, when Size_a < Size_u
     // TODO: recalc
-//     return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
+    return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
   }
 
 public: // getters
