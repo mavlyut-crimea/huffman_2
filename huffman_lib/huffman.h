@@ -57,6 +57,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   char tmp_char;
   buffered_reader br(fin);
   while (br.read(tmp_char)) {
+    std::cout << tmp_char;
     tr.inc(to_char_t(tmp_char));
   }
   std::cout << "CNT: " << tr.get_cnt_used() << "\n";
