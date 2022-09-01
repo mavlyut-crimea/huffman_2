@@ -109,6 +109,20 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
+TEST(test, write_to_file) {
+  std::fstream fstr("input", std::ios::out);
+  const size_t SZ = 100;
+  for (size_t i = 0; i < SZ; i++) {
+    std::cout << i << "\n";
+  }
+  std::vector<char> buf(SZ);
+  fstr.open("input", std::ios::in);
+  size_t cnt = fstr.readsome(&buf[0], SZ);
+  for (size_t i = 0; i < cnt; i++) {
+    std::cout << buf[i];
+  }
+}
+
 TEST(special, file_not_found) {
   ASSERT_THROW(encode("", ""), std::runtime_error);
 }
