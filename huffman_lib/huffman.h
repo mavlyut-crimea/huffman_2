@@ -55,8 +55,8 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   check_stream(fin >> std::noskipws);
   tree<code_t> tr;
   char tmp_char;
-  buffered_reader br(fin);
-  while (br.read(tmp_char)) {
+//   buffered_reader br(fin);
+  while (fin >> tmp_char) {
     std::cout << tmp_char;
     tr.inc(to_char_t(tmp_char));
   }
