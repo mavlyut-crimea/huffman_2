@@ -17,6 +17,7 @@ buffered_reader::buffered_reader(std::basic_istream<char>& in)
     : pos(0), cnt(0), buf(BUFSIZE, 0), in(in >> std::noskipws) {
   std::cout << "constructor of buffered_reader" << in.operator bool() << "\n";
   check();
+  std::cout << cnt << "(expect > 0) \n";
 }
 
 
