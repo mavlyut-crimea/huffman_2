@@ -41,14 +41,11 @@ struct hstream<std::stringstream> {
   }
 };
 
-#define t(num) time_t t##num = std::time(nullptr)
-
 template <typename code_t = huffman_code_type_examples::ct_default,
     bool read_from_file = true,
     typename std::enable_if<std::is_base_of<huffman_code_type, code_t>::value
         && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void encode(char const* in, std::basic_ostream<char>& fout) {
-  t(10);
   using stream_type = std::conditional_t<read_from_file, std::ifstream, std::stringstream>;
   using worker = hstream<stream_type>;
   stream_type fin;
@@ -57,12 +54,10 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   tree<code_t> tr;
   char tmp_char;
 //  buffered_reader br(fin);
-  t(0);
   while (fin >> tmp_char) {
     tr.inc(to_char_t(tmp_char));
   }
   std::cout << "CNT: " << tr.get_cnt_used() << "\n";
-  t(1);
   worker::end_work(fin);
   if (tr.get_cnt_used() == 1) {
     fout << MODES::ONE_CHAR << '\n';
@@ -78,23 +73,13 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   worker::start_work(fin, in);
   fin >> std::noskipws;
   check_stream(fin);
-  t(2);
   fout << tr;
-  t(3);
   obstream bout(fout);
-  t(4);
   while (fin >> tmp_char) {
     tr.get_code(to_char_t(tmp_char)).print_optimized(bout);
   }
-  t(5);
   bout.flush();
   worker::end_work(fin);
-  t(11);
-  std::cout << "Pre-calc: " << t1 - t0 << "s\n";
-  std::cout << "Print tree: " << t3 - t2 << "s\n";
-  std::cout << "Print enc_file: " << t5 - t4 << "s\n";
-  std::cout << "Print vector<ints>: " << huffman_code_type_examples::stime << "s\n";
-  std::cout << "All encode: " << t11 - t10 << "s\n";
 }
 
 template <typename code_t = huffman_code_type_examples::ct_default,
