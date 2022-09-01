@@ -59,6 +59,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   while (br.read(tmp_char)) {
     tr.inc(to_char_t(tmp_char));
   }
+  std::cout << "CNT: " << tr.get_cnt_used() << "\n";
   worker::end_work(fin);
   if (tr.get_cnt_used() == 1) {
     fout << MODES::ONE_CHAR << '\n';
