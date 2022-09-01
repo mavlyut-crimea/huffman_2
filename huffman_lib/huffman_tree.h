@@ -59,10 +59,11 @@ struct tree {
   }
 
   void inc(char_t x) {
-    if (weights[x] == 0) {
+    std::cout << from_char_t(x) << " " << weights[x] << " ";
+    if (weights[x]++ == 0) {
       cnt_used++;
     }
-    weights[x]++;
+    std::cout << weights[x] << "\n";
   }
 
   code_t const& get_code(char_t x) const {
