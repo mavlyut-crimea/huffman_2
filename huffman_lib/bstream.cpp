@@ -55,6 +55,11 @@ buffered_reader::operator bool() const {
 void buffered_reader::check() {
   if (pos == cnt) {
     cnt = in.readsome(&buf[0], BUFSIZE);
+    std::cout << "BUF: |";
+    for (size_t i = 0; i < cnt; i++) {
+      std::cout << buf[i];
+    }
+    std::cout << "|\n";
     pos = 0;
   }
 }
