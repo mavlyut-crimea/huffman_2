@@ -59,9 +59,10 @@ struct tree {
   }
 
   void inc(char_t x) {
-    if (weights[x]++ == 0) {
+    if (weights[x] == 0) {
       cnt_used++;
     }
+    weights[x]++;
   }
 
   code_t const& get_code(char_t x) const {
