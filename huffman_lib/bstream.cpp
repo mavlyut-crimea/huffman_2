@@ -11,8 +11,8 @@
 #define BUFSIZE 4096
 #define BASE 10
 
-#define my_assert(statement) \
-  if (!(statement)) throw std::runtime_error("statement")
+#define my_assert(statement, msg) \
+  if (!(statement)) throw std::runtime_error(msg)
 //  assert(statement)
 
 /// buffered reader
@@ -89,12 +89,12 @@ void ibstream::read(bool& x) {
     in.read(next_char);
     if (in.eof()) {
       mod = next_char - '0';
-      my_assert(next_char >= '1' && next_char <= '8');
+      my_assert(next_char >= '1' && next_char <= '8', "1");
     } else {
       mod = BYTESIZE;
     }
   }
-  my_assert(mod >= 1 && mod <= BYTESIZE);
+  my_assert(mod >= 1 && mod <= BYTESIZE, "2");
   x = (tmp_char >> (--mod)) & 1;
 }
 
