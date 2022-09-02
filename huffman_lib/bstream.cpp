@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <cassert>
+#include <boost/dynamic_bitset.hpp>
 
 #include "bstream.h"
 
@@ -11,15 +12,21 @@
 #define BUFSIZE 4096
 #define BASE 10
 
-#define my_assert(statement, msg) if (!(statement)) throw std::runtime_error(msg)
+#define my_assert(statement) \
+  if (!(statement)) throw std::runtime_error("statement")
+//  assert(statement)
 
 /// buffered reader
 
 buffered_reader::buffered_reader(std::basic_istream<char>& in)
     : pos(0), cnt(0), buf(BUFSIZE, 0), in(in >> std::noskipws) {
+#ifdef LOG_CLANG_PROBLEM
   std::cout << "constructor of buffered_reader" << in.operator bool() << "\n";
+#endif
   check();
+#ifdef LOG_CLANG_PROBLEM
   std::cout << cnt << "(expect > 0 for non-empty files) \n";
+#endif
 }
 
 buffered_reader::~buffered_reader() = default;
@@ -52,11 +59,13 @@ bool buffered_reader::eof() const {
 void buffered_reader::check() {
   if (pos == cnt) {
     cnt = in.readsome(buf.data(), BUFSIZE);
+#ifdef LOG_CLANG_PROBLEM
     std::cout << "BUF: |";
     for (size_t i = 0; i < cnt; i++) {
       std::cout << buf[i];
     }
     std::cout << "|\n";
+#endif
     pos = 0;
   }
 }
@@ -81,12 +90,12 @@ void ibstream::read(bool& x) {
     in.read(next_char);
     if (in.eof()) {
       mod = next_char - '0';
-      my_assert(next_char >= '1' && next_char <= '8', "1");
+      my_assert(next_char >= '1' && next_char <= '8');
     } else {
       mod = BYTESIZE;
     }
   }
-  my_assert(mod >= 1 && mod <= BYTESIZE, "2");
+  my_assert(mod >= 1 && mod <= BYTESIZE);
   x = (tmp_char >> (--mod)) & 1;
 }
 

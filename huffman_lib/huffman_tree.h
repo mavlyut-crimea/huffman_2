@@ -59,11 +59,15 @@ struct tree {
   }
 
   void inc(char_t x) {
+#ifdef LOG_CLANG_PROBLEM
     std::cout << from_char_t(x) << " " << weights[x] << " ";
+#endif
     if (weights[x]++ == 0) {
       cnt_used++;
     }
+#ifdef LOG_CLANG_PROBLEM
     std::cout << weights[x] << "\n";
+#endif
   }
 
   code_t const& get_code(char_t x) const {
