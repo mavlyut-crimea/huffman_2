@@ -4,7 +4,6 @@
 
 #include <cstring>
 #include <cassert>
-#include <boost/dynamic_bitset.hpp>
 
 #include "bstream.h"
 
