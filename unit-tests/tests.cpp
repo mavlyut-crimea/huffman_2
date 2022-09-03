@@ -45,7 +45,7 @@ void cat_file(std::string const& path) {
   std::cout << "\n__end__\n";
 }
 
-const std::string path = "../unit-tests";
+const std::string path = "unit-tests";
 
 template <typename T>
 void htest(std::string const& input) {
