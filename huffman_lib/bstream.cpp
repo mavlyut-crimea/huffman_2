@@ -95,7 +95,7 @@ void ibstream::read(bool& x) {
     }
   }
 //   my_assert(mod >= 1 && mod <= BYTESIZE, next_char);
-  mod = std::min<size_t>(1, std::max<size_t>(BYTESIZE, mod));
+  mod = std::max<size_t>(1, std::min<size_t>(BYTESIZE, mod));
   x = (tmp_char >> (--mod)) & 1;
 }
 
