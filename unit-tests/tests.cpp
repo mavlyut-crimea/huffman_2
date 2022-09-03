@@ -8,7 +8,7 @@
 using namespace huffman_code_type_examples;
 
 MODES get_mode_from_file(char const* name) {
-  std::ifstream fin(name, std::ios_base::in);
+  std::ifstream fin(name, std::ios_base::binary | std::ios_base::in);
   int mode;
   fin >> mode;
   fin.close();
@@ -22,7 +22,7 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
 }
 
 void ASSERT_EQ_FILES(char const* in1, char const* in2) {
-  std::ifstream fin1(in1, std::ios_base::in), fin2(in2, std::ios_base::in);
+  std::ifstream fin1(in1, std::ios_base::binary | std::ios_base::in), fin2(in2, std::ios_base::binary | std::ios_base::in);
   char tmp1 = 0, tmp2 = 0;
   while (!fin1.eof() && !fin2.eof()) {
     fin1 >> tmp1;
@@ -37,7 +37,7 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
 void cat_file(std::string const& path) {
   std::cout << "\n__" + path + "__\n";
   char tmp;
-  std::ifstream fin(path, std::ios_base::in);
+  std::ifstream fin(path, std::ios_base::binary | std::ios_base::in);
   fin >> std::noskipws;
   while (fin >> tmp) {
     std::cout << tmp;
@@ -45,7 +45,7 @@ void cat_file(std::string const& path) {
   std::cout << "\n__end__\n";
 }
 
-const std::string path = "unit-tests";
+const std::string path = "../unit-tests";
 
 template <typename T>
 void htest(std::string const& input) {
@@ -81,12 +81,16 @@ void htest(std::string const& input) {
   std::cout << "Decode time: " << t3 - t2 << "s\n\n";
   ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 416);
 #endif
-//   cat_file(in);
-//   cat_file(enc);
-//   cat_file(dec);
+// #ifdef LOG_CLANG_PROBLEM
+  cat_file(in);
+  cat_file(enc);
+  cat_file(dec);
+// #endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
+#ifndef LEAVE_FILES
   std::filesystem::remove(enc);
   std::filesystem::remove(dec);
+#endif
 }
 
 #define HTEST(input)                            \
@@ -109,169 +113,142 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-TEST(test, write_to_file) {
-  std::fstream fstr("input", std::ios::out);
-  const size_t SZ = 100;
-  for (size_t i = 0; i < SZ; i++) {
-    std::cout << i << "\n";
-  }
-  std::string buf(SZ, 0);
-  fstr.open("input", std::ios::in);
-  size_t cnt = fstr.readsome(&buf[0], SZ);
-  for (size_t i = 0; i < cnt; i++) {
-    std::cout << buf[i];
-  }
-}
+//TEST(debug, simple) {
+//  std::string new_path = path + "/files/full_abacaba";
+//  encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
+//}
 
-TEST(special, file_not_found) {
-  ASSERT_THROW(encode("", ""), std::runtime_error);
-}
+// TEST(test, read_from_br) {
+//   std::fstream fstr("input", std::ios_base::out);
+//   const size_t SZ = 100;
+//   for (size_t i = 0; i < SZ; i++) {
+//     std::cout << i << "\n";
+//   }
+//   fstr.open("input", std::ios_base::in);
+//   buffered_reader br(fstr);
+//   char tmp_char;
+//   while (!br.eof()) {
+//     br.read(tmp_char);
+//     std::cout << tmp_char;
+//   }
+// }
 
-TEST(special, empty_string) {
-//   I still don't agree, I want to implement EFO!
-  ASSERT_NE(encode(std::string("")), "");
-}
+// TEST(test, write_to_file) {
+//   std::fstream fstr("input", std::ios_base::out);
+//   const size_t SZ = 100;
+//   for (size_t i = 0; i < SZ; i++) {
+//     std::cout << i << "\n";
+//   }
+//   std::vector<char> buf(SZ);
+//   fstr.open("input", std::ios_base::in);
+//   size_t cnt = fstr.readsome(&buf[0], SZ);
+//   for (size_t i = 0; i < cnt; i++) {
+//     std::cout << buf[i];
+//   }
+// }
 
-TEST(special, simple) {
-  std::string str("abacaba");
-  ASSERT_EQ(decode(encode(str)), str);
-}
+// TEST(special, file_not_found) {
+//   ASSERT_THROW(encode("", ""), std::runtime_error);
+// }
 
-TEST(special, unknown_mode) {
-  ASSERT_ANY_THROW(decode("-120\nhrknf"));
-}
+// TEST(special, empty_string) {
+//   //   I still don't agree, I want to implement EFO!
+//   ASSERT_NE(encode(std::string("")), "");
+// }
 
-TEST(special, no_mode) {
-  ASSERT_ANY_THROW(decode("hello world, i want error\n"));
-}
+// TEST(special, simple) {
+//   std::string str("abacaba");
+//   ASSERT_EQ(decode(encode(str)), str);
+// }
 
-TEST(special, no_mode_2) {
-  ASSERT_ANY_THROW(decode("текст на русском\n"));
-}
+// TEST(special, unknown_mode) {
+//   ASSERT_ANY_THROW(decode("-120\nhrknf"));
+// }
 
-TEST(special, broken_all_mode) {
-  ASSERT_ANY_THROW(decode("-1\n"));
-}
+// TEST(special, no_mode) {
+//   ASSERT_ANY_THROW(decode("hello world, i want error\n"));
+// }
 
-TEST(special, capybara) {
-  std::string enc = encode("Я люблю капибар\n"
-           "I love capybaras\n"
-           "Ich liebe Wasserschweine\n"
-           "მე მიყვარს კაპიბარა\n"
-           "Λατρεύω τα capybaras\n"
-           "мен капибараны жақсы көремін\n"
-           "من عاشق کاپیبارا هستم\n"
-           "Ես սիրում եմ կապիբարա\n"
-           "Amo il capibara\n"
-           "me encanta capibara\n"
-           "Capybara amo\n"
-           "ฉันรักคาปิบาร่า\n"
-           "Я люблю капібар\n"
-           "Jeg elsker capybara\n"
-           "我愛水豚\n"
-           "waan jeclahay capybara\n"
-           "j'adore le capibara\n"
-           "Мин капыбараны яратам\n"
-           "Tha gaol agam air capybara\n"
-           "kocham kapibarę\n"
-           "kapibarayı severim\n"
-           "Mi amas kapibaron\n"
-           "カピバラ大好き\n"
-           "Ndimakonda capybara\n"
-           "මම කැපිබරාට ආදරෙයි\n"
-           "Jeg elsker capybara\n"
-           "אני אוהב קפיברה\n"
-           "أنا أحب كابيبارا\n"
-           "ငါ capybara ကိုချစ်တယ်။\n"
-           "Обичам капибара\n"
-           "Aš myliu kapibarą\n"
-           "Ech Léift Capybara\n"
-           "Tôi yêu capybara\n"
-           "Men kapibarani yaxshi ko'raman\n"
-           "Ek is mal oor capybara\n"
-           "मलाई capybara मन पर्छ\n"
-           "Melɔ̃a capybara ŋutɔ\n"
-           "Milujem kapybaru\n"
-           "Ndiyayithanda i-capybara\n"
-           "Rakastan capybaraa\n"
-           "মই কেপিবাৰাক ভাল পাওঁ\n"
-           "Capybara hi ka ngaina hle");
-  std::cout << enc << "\n_______\n";
-  std::cout << decode(enc) << "\n";
-}
+// TEST(special, no_mode_2) {
+//   ASSERT_ANY_THROW(decode("текст на русском\n"));
+// }
 
-// 0
-HTEST(empty)
+// TEST(special, broken_all_mode) {
+//   ASSERT_ANY_THROW(decode("-1\n"));
+// }
 
-// 1 Kb, 165 b
-HTEST(i_said_everything_i_wanted)
+// // 0
+// HTEST(empty)
 
-// 3 Kb, 167 b
-HTEST(imo2022_chinese)
+// // 1 Kb, 165 b
+// HTEST(i_said_everything_i_wanted)
+
+// // 3 Kb, 167 b
+// HTEST(imo2022_chinese)
 
 // 21 Kb, 667 b
 HTEST(test_elf)
 
-// 62 Kb, 839 b
-HTEST(war_and_peace_wiki)
+// // 62 Kb, 839 b
+// HTEST(war_and_peace_wiki)
 
-// 137 Kb, 648 b
-HTEST(test_asm)
+// // 137 Kb, 648 b
+// HTEST(test_asm)
 
-// 263 Kb, 907 b
-HTEST(cpp_tutorial)
+// // 263 Kb, 907 b
+// HTEST(cpp_tutorial)
 
-// 356 Kb, 1008 b
-HTEST(some_program)
+// // 356 Kb, 1008 b
+// HTEST(some_program)
 
-// 1 Mb, 351 Kb, 718 b
-HTEST(organic_chemistry_en)
+// // 1 Mb, 351 Kb, 718 b
+// HTEST(organic_chemistry_en)
 
-// 1 Mb, 391 Kb, 166 b
-HTEST(java_tutorial)
+// // 1 Mb, 391 Kb, 166 b
+// HTEST(java_tutorial)
 
-// 5 Mb, 788 Kb, 947 b
-HTEST(organic_chemistry_in_4_volumes)
+// // 5 Mb, 788 Kb, 947 b
+// HTEST(organic_chemistry_in_4_volumes)
 
-#ifdef _ENABLE_BIG_TESTS
+// #ifdef _ENABLE_BIG_TESTS
 
-// 16 Mb, 651 Mb, 365 b
-HTEST(AAA)
+// // 16 Mb, 651 Mb, 365 b
+// HTEST(AAA)
 
-static constexpr size_t ALPHABET_SIZE = 26;
+// static constexpr size_t ALPHABET_SIZE = 26;
 
-static char get(size_t i) {
-  size_t ans = 0;
-  while (i % 2) {
-    i /= 2;
-    ans++;
-  }
-  return static_cast<char>(ans + 'a');
-}
+// static char get(size_t i) {
+//   size_t ans = 0;
+//   while (i % 2) {
+//     i /= 2;
+//     ans++;
+//   }
+//   return static_cast<char>(ans + 'a');
+// }
 
-// 63 Mb, 1023 Kb, 1023 b
-TEST(full_abacaba, ct_default) {
-  std::string new_path = path + "/files/full_abacaba";
-  std::ofstream fout(new_path, std::ios_base::out);
-  size_t end = (1L << ALPHABET_SIZE) - 1;
-  for (size_t i = 0; i < end; i++) {
-    fout << get(i);
-  }
-  htest<ct_default>("full_abacaba");
-  std::filesystem::remove(new_path);
-}
+// // 63 Mb, 1023 Kb, 1023 b
+// TEST(full_abacaba, ct_default) {
+//   std::string new_path = path + "/files/full_abacaba";
+//   std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+//   size_t end = (1L << ALPHABET_SIZE) - 1;
+//   for (size_t i = 0; i < end; i++) {
+//     fout << get(i);
+//   }
+//   htest<ct_default>("full_abacaba");
+//   std::filesystem::remove(new_path);
+// }
 
-// 1 Gb
-TEST(bigfile, ct_default) {
-  srand(time(nullptr));
-  std::string new_path = path + "/files/bigfile";
-  std::ofstream fout(new_path, std::ios_base::out);
-  for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
-    fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
-  }
-  fout.close();
-  htest<ct_default>("bigfile");
-  std::filesystem::remove(new_path);
-}
+// // 1 Gb
+// TEST(bigfile, ct_default) {
+//   srand(time(nullptr));
+//   std::string new_path = path + "/files/bigfile";
+//   std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+//   for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
+//     fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
+//   }
+//   fout.close();
+//   htest<ct_default>("bigfile");
+//   std::filesystem::remove(new_path);
+// }
 
-#endif
+// #endif
