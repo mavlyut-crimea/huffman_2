@@ -13,8 +13,7 @@
 
 void my_assert(bool statement, char& msg) {
   if (!statement)
-    msg = std::min<char>(1, std::max<char>(BYTESIZE, msg));
-//    throw std::runtime_error(std::string(1, msg));
+    throw std::runtime_error(std::string(1, msg));
 }
 
 /// buffered reader
@@ -91,12 +90,12 @@ void ibstream::read(bool& x) {
     in.read(next_char);
     if (in.eof()) {
       mod = next_char - '0';
-      my_assert(next_char >= '1' && next_char <= '8', next_char);
     } else {
       mod = BYTESIZE;
     }
   }
-  my_assert(mod >= 1 && mod <= BYTESIZE, next_char);
+//   my_assert(mod >= 1 && mod <= BYTESIZE, next_char);
+  mod = std::min<size_t>(1, std::max<size_t>(BYTESIZE, mod));
   x = (tmp_char >> (--mod)) & 1;
 }
 
