@@ -113,10 +113,10 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-TEST(debug, simple) {
- std::string new_path = path + "/files/full_abacaba";
- encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
-}
+// TEST(debug, simple) {
+//  std::string new_path = path + "/files/full_abacaba";
+//  encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
+// }
 
 TEST(test, read_from_br) {
   std::fstream fstr("input", std::ios_base::out);
