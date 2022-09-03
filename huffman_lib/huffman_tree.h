@@ -59,6 +59,7 @@ struct tree {
   }
 
   void inc(char_t x) {
+    std::cout << static_cast<int>(x) << " ";
 #ifdef LOG_CLANG_PROBLEM
     std::cout << from_char_t(x) << " " << weights[x] << " ";
 #endif
