@@ -113,142 +113,142 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-//TEST(debug, simple) {
-//  std::string new_path = path + "/files/full_abacaba";
-//  encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
-//}
+TEST(debug, simple) {
+ std::string new_path = path + "/files/full_abacaba";
+ encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
+}
 
-// TEST(test, read_from_br) {
-//   std::fstream fstr("input", std::ios_base::out);
-//   const size_t SZ = 100;
-//   for (size_t i = 0; i < SZ; i++) {
-//     std::cout << i << "\n";
-//   }
-//   fstr.open("input", std::ios_base::in);
-//   buffered_reader br(fstr);
-//   char tmp_char;
-//   while (!br.eof()) {
-//     br.read(tmp_char);
-//     std::cout << tmp_char;
-//   }
-// }
+TEST(test, read_from_br) {
+  std::fstream fstr("input", std::ios_base::out);
+  const size_t SZ = 100;
+  for (size_t i = 0; i < SZ; i++) {
+    std::cout << i << "\n";
+  }
+  fstr.open("input", std::ios_base::in);
+  buffered_reader br(fstr);
+  char tmp_char;
+  while (!br.eof()) {
+    br.read(tmp_char);
+    std::cout << tmp_char;
+  }
+}
 
-// TEST(test, write_to_file) {
-//   std::fstream fstr("input", std::ios_base::out);
-//   const size_t SZ = 100;
-//   for (size_t i = 0; i < SZ; i++) {
-//     std::cout << i << "\n";
-//   }
-//   std::vector<char> buf(SZ);
-//   fstr.open("input", std::ios_base::in);
-//   size_t cnt = fstr.readsome(&buf[0], SZ);
-//   for (size_t i = 0; i < cnt; i++) {
-//     std::cout << buf[i];
-//   }
-// }
+TEST(test, write_to_file) {
+  std::fstream fstr("input", std::ios_base::out);
+  const size_t SZ = 100;
+  for (size_t i = 0; i < SZ; i++) {
+    std::cout << i << "\n";
+  }
+  std::vector<char> buf(SZ);
+  fstr.open("input", std::ios_base::in);
+  size_t cnt = fstr.readsome(&buf[0], SZ);
+  for (size_t i = 0; i < cnt; i++) {
+    std::cout << buf[i];
+  }
+}
 
-// TEST(special, file_not_found) {
-//   ASSERT_THROW(encode("", ""), std::runtime_error);
-// }
+TEST(special, file_not_found) {
+  ASSERT_THROW(encode("", ""), std::runtime_error);
+}
 
-// TEST(special, empty_string) {
-//   //   I still don't agree, I want to implement EFO!
-//   ASSERT_NE(encode(std::string("")), "");
-// }
+TEST(special, empty_string) {
+  //   I still don't agree, I want to implement EFO!
+  ASSERT_NE(encode(std::string("")), "");
+}
 
-// TEST(special, simple) {
-//   std::string str("abacaba");
-//   ASSERT_EQ(decode(encode(str)), str);
-// }
+TEST(special, simple) {
+  std::string str("abacaba");
+  ASSERT_EQ(decode(encode(str)), str);
+}
 
-// TEST(special, unknown_mode) {
-//   ASSERT_ANY_THROW(decode("-120\nhrknf"));
-// }
+TEST(special, unknown_mode) {
+  ASSERT_ANY_THROW(decode("-120\nhrknf"));
+}
 
-// TEST(special, no_mode) {
-//   ASSERT_ANY_THROW(decode("hello world, i want error\n"));
-// }
+TEST(special, no_mode) {
+  ASSERT_ANY_THROW(decode("hello world, i want error\n"));
+}
 
-// TEST(special, no_mode_2) {
-//   ASSERT_ANY_THROW(decode("текст на русском\n"));
-// }
+TEST(special, no_mode_2) {
+  ASSERT_ANY_THROW(decode("текст на русском\n"));
+}
 
-// TEST(special, broken_all_mode) {
-//   ASSERT_ANY_THROW(decode("-1\n"));
-// }
+TEST(special, broken_all_mode) {
+  ASSERT_ANY_THROW(decode("-1\n"));
+}
 
-// // 0
-// HTEST(empty)
+// 0
+HTEST(empty)
 
-// // 1 Kb, 165 b
-// HTEST(i_said_everything_i_wanted)
+// 1 Kb, 165 b
+HTEST(i_said_everything_i_wanted)
 
-// // 3 Kb, 167 b
-// HTEST(imo2022_chinese)
+// 3 Kb, 167 b
+HTEST(imo2022_chinese)
 
 // 21 Kb, 667 b
 HTEST(test_elf)
 
-// // 62 Kb, 839 b
-// HTEST(war_and_peace_wiki)
+// 62 Kb, 839 b
+HTEST(war_and_peace_wiki)
 
-// // 137 Kb, 648 b
-// HTEST(test_asm)
+// 137 Kb, 648 b
+HTEST(test_asm)
 
-// // 263 Kb, 907 b
-// HTEST(cpp_tutorial)
+// 263 Kb, 907 b
+HTEST(cpp_tutorial)
 
-// // 356 Kb, 1008 b
-// HTEST(some_program)
+// 356 Kb, 1008 b
+HTEST(some_program)
 
-// // 1 Mb, 351 Kb, 718 b
-// HTEST(organic_chemistry_en)
+// 1 Mb, 351 Kb, 718 b
+HTEST(organic_chemistry_en)
 
-// // 1 Mb, 391 Kb, 166 b
-// HTEST(java_tutorial)
+// 1 Mb, 391 Kb, 166 b
+HTEST(java_tutorial)
 
-// // 5 Mb, 788 Kb, 947 b
-// HTEST(organic_chemistry_in_4_volumes)
+// 5 Mb, 788 Kb, 947 b
+HTEST(organic_chemistry_in_4_volumes)
 
-// #ifdef _ENABLE_BIG_TESTS
+#ifdef _ENABLE_BIG_TESTS
 
-// // 16 Mb, 651 Mb, 365 b
-// HTEST(AAA)
+// 16 Mb, 651 Mb, 365 b
+HTEST(AAA)
 
-// static constexpr size_t ALPHABET_SIZE = 26;
+static constexpr size_t ALPHABET_SIZE = 26;
 
-// static char get(size_t i) {
-//   size_t ans = 0;
-//   while (i % 2) {
-//     i /= 2;
-//     ans++;
-//   }
-//   return static_cast<char>(ans + 'a');
-// }
+static char get(size_t i) {
+  size_t ans = 0;
+  while (i % 2) {
+    i /= 2;
+    ans++;
+  }
+  return static_cast<char>(ans + 'a');
+}
 
-// // 63 Mb, 1023 Kb, 1023 b
-// TEST(full_abacaba, ct_default) {
-//   std::string new_path = path + "/files/full_abacaba";
-//   std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
-//   size_t end = (1L << ALPHABET_SIZE) - 1;
-//   for (size_t i = 0; i < end; i++) {
-//     fout << get(i);
-//   }
-//   htest<ct_default>("full_abacaba");
-//   std::filesystem::remove(new_path);
-// }
+// 63 Mb, 1023 Kb, 1023 b
+TEST(full_abacaba, ct_default) {
+  std::string new_path = path + "/files/full_abacaba";
+  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+  size_t end = (1L << ALPHABET_SIZE) - 1;
+  for (size_t i = 0; i < end; i++) {
+    fout << get(i);
+  }
+  htest<ct_default>("full_abacaba");
+  std::filesystem::remove(new_path);
+}
 
-// // 1 Gb
-// TEST(bigfile, ct_default) {
-//   srand(time(nullptr));
-//   std::string new_path = path + "/files/bigfile";
-//   std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
-//   for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
-//     fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
-//   }
-//   fout.close();
-//   htest<ct_default>("bigfile");
-//   std::filesystem::remove(new_path);
-// }
+// 1 Gb
+TEST(bigfile, ct_default) {
+  srand(time(nullptr));
+  std::string new_path = path + "/files/bigfile";
+  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+  for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
+    fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
+  }
+  fout.close();
+  htest<ct_default>("bigfile");
+  std::filesystem::remove(new_path);
+}
 
-// #endif
+#endif
