@@ -124,7 +124,7 @@ struct tree {
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
         std::cout << i << " " << x.weights[i] << "\n";
-        if (x.weights[i]) {
+        if (x.weights[i] > 0) {
           out << from_char_t(i);
           print(out, x.codes[i]);
         }
