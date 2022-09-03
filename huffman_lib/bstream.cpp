@@ -11,9 +11,10 @@
 #define BUFSIZE 4096
 #define BASE 10
 
-void my_assert(bool statement, char msg) {
-//   if (!statement)
-//     throw std::runtime_error(std::string(1, msg));
+void my_assert(bool statement, char& msg) {
+  if (!statement)
+    msg = std::min<char>(1, std::max<char>(BYTESIZE, msg));
+//    throw std::runtime_error(std::string(1, msg));
 }
 
 /// buffered reader
