@@ -148,7 +148,8 @@ private: // structures
     node* right;
 
     explicit node(node* left = nullptr, node* right = nullptr)
-        : value(0), weight(get_weight(left) + get_weight(right)),
+        : value(std::min(get_value(left), get_value(right))),
+          weight(get_weight(left) + get_weight(right)),
           left(left), right(right) {}
 
     explicit node(char_t value, weight_t weight = 1)
@@ -160,7 +161,8 @@ private: // structures
     }
 
     bool is_semi_leaf(bool is_right) const {
-      if (is_right) return !right;
+      if (is_right)
+        return !right;
       return !left;
     }
   };
@@ -168,7 +170,7 @@ private: // structures
   struct comparator_nodes {
     bool operator()(node const* a, node const* b) const {
       ptrdiff_t diff = static_cast<ptrdiff_t>(get_weight(a))
-                       - static_cast<ptrdiff_t>(get_weight(b));
+                     - static_cast<ptrdiff_t>(get_weight(b));
       if (!diff)
         return a->value > b->value;
       return diff > 0;
@@ -205,8 +207,15 @@ private: // methods
   }
 
   friend weight_t get_weight(node const* x) {
-    if (x) return x->weight;
+    if (x)
+      return x->weight;
     return 0;
+  }
+
+  friend char_t get_value(node const* x) {
+    if (x)
+      return x->value;
+    return MAX_SIZE - 1;
   }
 
   bool a_mode_is_better() const {
