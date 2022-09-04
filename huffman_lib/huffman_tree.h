@@ -129,12 +129,16 @@ struct tree {
     } else {
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
+#ifdef LOG_CLANG_PROBLEN
         std::cout << i << " " << x.weights[i] << " ";
+#endif
         if (x.weights[i]) {
           out << from_char_t(i);
           print(out, x.codes[i]);
         }
-        std::cout << "\n";
+#ifdef LOG_CLANG_PROBLEN
+        std::cout << '\n';
+#endif
       }
     }
     return out;
@@ -223,8 +227,7 @@ private: // methods
     // Size_u = LEN + MAX_SIZE + 2 * cnt_used + 1 + floor(log10(cnt_used) + 1)
     // So, a_mode is better, when Size_a < Size_u
     // TODO: recalc
-    return true;
-//     return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
+    return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
   }
 
   friend void print(std::priority_queue<node*, std::vector<node*>, comparator_nodes> q) {
@@ -235,19 +238,6 @@ private: // methods
                 << ", weight: " << l->weight << "\n";
     }
     std::cout << "\n";
-  }
-
-  friend void print(node const* x, std::string& ans) {
-    if (x->is_leaf()) {
-      std::cout << static_cast<size_t>(x->value) << " " << ans << '\n';
-      return;
-    }
-    ans.push_back('0');
-    print(x->left, ans);
-    ans.pop_back();
-    ans.push_back('1');
-    print(x->right, ans);
-    ans.pop_back();
   }
 
 public: // getters
@@ -261,6 +251,19 @@ public: // getters
 
   weight_t get_count(char_t ch) {
     return weights[ch];
+  }
+
+  friend void print(node const* x, std::string& ans) {
+    if (x->is_leaf()) {
+      std::cout << static_cast<size_t>(x->value) << " " << ans << '\n';
+      return;
+    }
+    ans.push_back('0');
+    print(x->left, ans);
+    ans.pop_back();
+    ans.push_back('1');
+    print(x->right, ans);
+    ans.pop_back();
   }
 };
 

@@ -151,6 +151,7 @@ template <typename code_t = huffman_code_type_examples::ct_default,
         && !std::is_same<huffman_code_type, code_t>::value, void*>::type = nullptr>
 void decode(std::basic_istream<char>& fin,
             std::basic_ostream<char>& fout = std::cout) {
+  std::cout << "DECODE\n";
   tree<code_t> tr;
   char tmp;
   int imode = MODES::UNKNOWN;
@@ -176,6 +177,10 @@ void decode(std::basic_istream<char>& fin,
     read_used_codes(bin, tr, imode);
   } else {
     throw std::runtime_error("File was broken: unknown mode " + std::to_string(imode));
+  }
+  {
+    std::string s;
+    print(tr.get_root(), s);
   }
   bool x;
   auto nd = tr.get_root();
