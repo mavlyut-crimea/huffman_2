@@ -8,10 +8,12 @@
 
 void print(std::basic_ostream<char>& out, huffman_code_type const& a) {
   out << a.size();
+  std::cout << a.size() << " ";
   if (a.size()) {
     out << ' ';
     a.print(out);
   }
+  std::cout << "\n";
 }
 
 void huffman_code_type::print(std::basic_ostream<char>& out) const {
@@ -22,7 +24,11 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
     tmp = 0;
     for (size_t j = 0; j < BYTESIZE; j++) {
       tmp <<= 1;
-      if (operator[](i + j)) tmp++;
+      if (operator[](i + j)) {
+        tmp++;
+        std::cout << "1";
+      } else
+        std::cout << "0";
     }
     out << tmp;
   }
@@ -30,7 +36,11 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
     tmp = 0;
     for (size_t i = end; i < sz; i++) {
       tmp <<= 1;
-      if (operator[](i)) tmp++;
+      if (operator[](i)) {
+        tmp++;
+        std::cout << "1";
+      } else
+        std::cout << "0";
     }
     out << tmp;
   }
