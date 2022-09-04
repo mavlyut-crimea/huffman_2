@@ -123,11 +123,12 @@ struct tree {
     } else {
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
-       std::cout << i << " " << x.weights[i] << " ";
+        std::cout << i << " " << x.weights[i] << " ";
         if (x.weights[i]) {
           out << from_char_t(i);
           print(out, x.codes[i]);
         }
+        std::cout << "\n";
       }
     }
     return out;

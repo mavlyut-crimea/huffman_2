@@ -13,7 +13,6 @@ void print(std::basic_ostream<char>& out, huffman_code_type const& a) {
     out << ' ';
     a.print(out);
   }
-  std::cout << "\n";
 }
 
 void huffman_code_type::print(std::basic_ostream<char>& out) const {
