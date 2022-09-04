@@ -75,11 +75,19 @@ struct tree {
   }
 
   void build_tree() {
-    std::priority_queue<node*, std::vector<node*>, comparator_nodes> q;
+    std::priority_queue<node*, std::vector<node*>, comparator_nodes> q, q1;
     for (weight_t i = 0; i < MAX_SIZE; i++) {
       if (weights[i]) {
         q.push(new node(i, weights[i]));
+        q1.push(new node(i, weights[i]));
       }
+    }
+    while (!q1.empty()) {
+      node* l = q1.top();
+      q1.pop();
+      std::cout << "Value: " << static_cast<size_t>(to_char_t(l->value))
+                             << ", weight: " << l->weight << "\n";
+      delete l;
     }
     while (q.size() > 1) {
       node* x = q.top();
