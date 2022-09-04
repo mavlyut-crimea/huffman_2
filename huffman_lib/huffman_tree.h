@@ -81,20 +81,23 @@ struct tree {
         q.push(new node(i, weights[i]));
       }
     }
-    print(q);
+//    print(q);
     while (q.size() > 1) {
       node* x = q.top();
       q.pop();
       node* y = q.top();
       q.pop();
       q.push(new node(x, y));
-      print(q);
+//      print(q);
     }
     if (q.size()) {
       delete root.left;
       root.left = q.top();
     }
-    print(get_root());
+    {
+      std::string s;
+      print(get_root(), s);
+    }
     code_t tmp_code;
     put_codes(get_root(), tmp_code);
   }
@@ -164,7 +167,8 @@ private: // structures
 
   struct comparator_nodes {
     bool operator()(node const* a, node const* b) const {
-      ptrdiff_t diff = static_cast<ptrdiff_t>(get_weight(a)) - static_cast<ptrdiff_t>(get_weight(b));
+      ptrdiff_t diff = static_cast<ptrdiff_t>(get_weight(a))
+                       - static_cast<ptrdiff_t>(get_weight(b));
       if (!diff)
         return a->value > b->value;
       return diff > 0;
@@ -186,9 +190,8 @@ private: // methods
   }
 
   void put_codes(node* tmp, code_t& tmp_code) {
-    if (!tmp) {
+    if (!tmp)
       return;
-    }
     if (tmp->is_leaf()) {
       codes[tmp->value] = tmp_code;
       return;
@@ -224,13 +227,17 @@ private: // methods
     std::cout << "\n";
   }
 
-  friend void print(node const* x) {
+  friend void print(node const* x, std::string& ans) {
     if (x->is_leaf()) {
-      std::cout << static_cast<size_t>(x->value) << " ";
+      std::cout << static_cast<size_t>(x->value) << " " << ans << '\n';
       return;
     }
-    print(x->left);
-    print(x->right);
+    ans.push_back('0');
+    print(x->left, ans);
+    ans.pop_back();
+    ans.push_back('1');
+    print(x->right, ans);
+    ans.pop_back();
   }
 
 public: // getters
