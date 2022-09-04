@@ -75,26 +75,20 @@ struct tree {
   }
 
   void build_tree() {
-    std::priority_queue<node*, std::vector<node*>, comparator_nodes> q, q1;
+    std::priority_queue<node*, std::vector<node*>, comparator_nodes> q;
     for (weight_t i = 0; i < MAX_SIZE; i++) {
       if (weights[i]) {
         q.push(new node(i, weights[i]));
-        q1.push(new node(i, weights[i]));
       }
     }
-    while (!q1.empty()) {
-      node* l = q1.top();
-      q1.pop();
-      std::cout << "Value: " << static_cast<size_t>(to_char_t(l->value))
-                             << ", weight: " << l->weight << "\n";
-      delete l;
-    }
+    print(q);
     while (q.size() > 1) {
       node* x = q.top();
       q.pop();
       node* y = q.top();
       q.pop();
       q.push(new node(x, y));
+      print(q);
     }
     if (q.size()) {
       delete root.left;
@@ -217,6 +211,16 @@ private: // methods
     // So, a_mode is better, when Size_a < Size_u
     // TODO: recalc
     return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
+  }
+
+  friend void print(std::priority_queue<node*, std::vector<node*>, comparator_nodes> q) {
+    while (!q.empty()) {
+      node* l = q.top();
+      q.pop();
+      std::cout << "Value: " << static_cast<size_t>(to_char_t(l->value))
+                << ", weight: " << l->weight << "\n";
+    }
+    std::cout << "\n";
   }
 
 public: // getters
