@@ -81,14 +81,14 @@ struct tree {
         q.push(new node(i, weights[i]));
       }
     }
-//     print(q);
+    print(q);
     while (q.size() > 1) {
       node* x = q.top();
       q.pop();
       node* y = q.top();
       q.pop();
       q.push(new node(x, y));
-//       print(q);
+      print(q);
     }
     if (q.size()) {
       delete root.left;
@@ -218,7 +218,7 @@ private: // methods
     while (!q.empty()) {
       node* l = q.top();
       q.pop();
-      std::cout << "Value: " << static_cast<size_t>(to_char_t(l->value))
+      std::cout << "Value: " << static_cast<size_t>(l->value)
                 << ", weight: " << l->weight << "\n";
     }
     std::cout << "\n";
