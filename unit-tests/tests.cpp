@@ -113,6 +113,10 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
+TEST(test_elf, ct_default) {
+  htest<ct_default>("test_elf");
+}
+
 // TEST(debug, simple) {
 //  std::string new_path = path + "/files/full_abacaba";
 //  encode(new_path.c_str(), (path + "/full_abacaba.huf").c_str());
@@ -186,8 +190,8 @@ void htest(std::string const& input) {
 // // 3 Kb, 167 b
 // HTEST(imo2022_chinese)
 
-// 21 Kb, 667 b
-HTEST(test_elf)
+// // 21 Kb, 667 b
+// HTEST(test_elf)
 
 // // 62 Kb, 839 b
 // HTEST(war_and_peace_wiki)
