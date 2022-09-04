@@ -161,7 +161,7 @@ private: // structures
 
   struct comparator_nodes {
     bool operator()(node const* a, node const* b) const {
-      ptrdiff_t diff = get_weight(a) - get_weight(b);
+      ptrdiff_t diff = static_cast<ptrdiff_t>(get_weight(a)) - static_cast<ptrdiff_t>(get_weight(b));
       if (!diff)
         return a->value > b->value;
       return diff > 0;
