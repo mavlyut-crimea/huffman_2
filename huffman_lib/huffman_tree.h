@@ -81,19 +81,20 @@ struct tree {
         q.push(new node(i, weights[i]));
       }
     }
-    print(q);
+//     print(q);
     while (q.size() > 1) {
       node* x = q.top();
       q.pop();
       node* y = q.top();
       q.pop();
       q.push(new node(x, y));
-      print(q);
+//       print(q);
     }
     if (q.size()) {
       delete root.left;
       root.left = q.top();
     }
+    print(get_root());
     code_t tmp_code;
     put_codes(get_root(), tmp_code);
   }
@@ -221,6 +222,15 @@ private: // methods
                 << ", weight: " << l->weight << "\n";
     }
     std::cout << "\n";
+  }
+
+  friend void print(node const* x) {
+    if (x->is_leaf()) {
+      std::cout << static_cast<size_t>(x->value) << " ";
+      return;
+    }
+    print(x->left);
+    print(x->right);
   }
 
 public: // getters
