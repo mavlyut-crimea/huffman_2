@@ -81,7 +81,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   fin >> std::noskipws;
   check_stream(fin);
   t(2);
-//   fout << tr;
+  fout << tr;
   t(3);
   obstream bout(fout);
   t(4);
