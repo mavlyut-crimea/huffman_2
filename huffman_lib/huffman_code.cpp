@@ -8,7 +8,9 @@
 
 void print(std::basic_ostream<char>& out, huffman_code_type const& a) {
   out << a.size();
+#ifdef LOG_CLANG_PROBLEM
   std::cout << a.size() << " ";
+#endif
   if (a.size()) {
     out << ' ';
     a.print(out);
@@ -25,9 +27,12 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
       tmp <<= 1;
       if (operator[](i + j)) {
         tmp++;
+#ifdef LOG_CLANG_PROBLEM
         std::cout << "1";
-      } else
+      } else {
         std::cout << "0";
+#endif
+      }
     }
     out << tmp;
   }
@@ -37,9 +42,12 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
       tmp <<= 1;
       if (operator[](i)) {
         tmp++;
+#ifdef LOG_CLANG_PROBLEM
         std::cout << "1";
-      } else
+      } else {
         std::cout << "0";
+#endif
+      }
     }
     out << tmp;
   }
