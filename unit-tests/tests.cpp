@@ -40,7 +40,7 @@ void cat_file(std::string const& path) {
   std::ifstream fin(path, std::ios_base::binary | std::ios_base::in);
   fin >> std::noskipws;
   while (fin >> tmp) {
-    std::cout << tmp;
+    std::cout << static_cast<int>(tmp);
   }
   std::cout << "\n__end__\n";
 }
