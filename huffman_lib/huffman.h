@@ -186,6 +186,7 @@ void decode(std::basic_istream<char>& fin,
   auto nd = tr.get_root();
   while (bin) {
     bin.read(x);
+    std::cout << x;
     if ((nd->right == nullptr) != (nd->left == nullptr)) {
       std::cout << "error\n";
     }
