@@ -227,7 +227,8 @@ private: // methods
     // Size_u = LEN + MAX_SIZE + 2 * cnt_used + 1 + floor(log10(cnt_used) + 1)
     // So, a_mode is better, when Size_a < Size_u
     // TODO: recalc
-    return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
+    return true;
+//     return 2 * MAX_SIZE + 1 < 3 * cnt_used + count_of_digits(cnt_used);
   }
 
   friend void print(std::priority_queue<node*, std::vector<node*>, comparator_nodes> q) {
