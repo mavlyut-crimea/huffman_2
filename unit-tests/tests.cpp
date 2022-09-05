@@ -114,9 +114,15 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-TEST(test_elf, ct_default) {
-  htest<ct_default>("test_elf");
+TEST(test_suit_name, test_name) {
+  for (char i = -128; i++ < 127; ) {
+    std::cout << static_cast<int>(i) << " " << i << '\n';
+  }
 }
+
+// TEST(test_elf, ct_default) {
+//   htest<ct_default>("test_elf");
+// }
 
 // TEST(debug, simple) {
 //  std::string new_path = path + "/files/full_abacaba";
