@@ -37,8 +37,7 @@ if (USE_SANITIZERS)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(tests PUBLIC -stdlib=libc++)
-#  target_compile_options(tests PUBLIC -std=c++17)
+  target_compile_options(tests PUBLIC -std=c++17)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
