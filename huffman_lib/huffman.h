@@ -86,6 +86,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   obstream bout(fout);
   t(4);
   while (fin >> tmp_char) {
+    std::cout << tmp_char;
     tr.get_code(to_char_t(tmp_char)).print_optimized(bout);
   }
   t(5);
