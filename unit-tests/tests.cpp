@@ -60,11 +60,11 @@ void htest(std::string const& input) {
 #ifdef LOG
   time_t t1 = std::time(nullptr);
 #endif
-//   encode<T>(in.c_str(), enc.c_str());
+  encode<T>(in.c_str(), enc.c_str());
 #ifdef LOG
   time_t t2 = std::time(nullptr);
 #endif
-//   decode<T>(enc.c_str(), dec.c_str());
+  decode<T>(enc.c_str(), dec.c_str());
 #ifdef LOG
   time_t t3 = std::time(nullptr);
   size_t s1 = std::filesystem::file_size(in);
@@ -83,14 +83,14 @@ void htest(std::string const& input) {
 #endif
 // #ifdef LOG_CLANG_PROBLEM
   cat_file(in);
-//   cat_file(enc);
-//   cat_file(dec);
+  cat_file(enc);
+  cat_file(dec);
 // #endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
   ASSERT_EQ_FILES(enc.c_str(), (path + "/files/test_elf_N26huffman_code_type_examples9ct_stringE.huf").c_str());
 #ifndef LEAVE_FILES
-//   std::filesystem::remove(enc);
-//   std::filesystem::remove(dec);
+  std::filesystem::remove(enc);
+  std::filesystem::remove(dec);
 #endif
 }
 
@@ -114,15 +114,9 @@ void htest(std::string const& input) {
     htest<ct_vector_ints<size_t>>(#input);      \
   }
 
-TEST(test_suit_name, test_name) {
-  for (char i = -128; i++ < 127; ) {
-    std::cout << static_cast<int>(i) << " " << i << '\n';
-  }
+TEST(test_elf, ct_default) {
+  htest<ct_default>("test_elf");
 }
-
-// TEST(test_elf, ct_default) {
-//   htest<ct_default>("test_elf");
-// }
 
 // TEST(debug, simple) {
 //  std::string new_path = path + "/files/full_abacaba";
