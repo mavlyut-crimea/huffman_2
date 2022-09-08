@@ -2,11 +2,11 @@
 // Created by mavlyut on 24.07.22.
 //
 
-#include "huffman_code.h"
 #include <sstream>
 
-std::basic_ostream<char>&
-operator<<(std::basic_ostream<char>& out, huffman_code_type const& a) {
+#include "huffman_code.h"
+
+void print(std::basic_ostream<char>& out, huffman_code_type const& a) {
   out << a.size();
   if (a.size()) {
     out << ' ';
@@ -39,12 +39,6 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
 
 void huffman_code_type::print(obstream& bout) const {
   for (size_t i = 0; i < size(); i++) {
-    bout << operator[](i);
+    bout.print(operator[](i));
   }
-}
-
-obstream& operator<<(obstream& bout, huffman_code_type const& x) {
-  x.print_optimized(bout);
-//  x.print(bout);
-  return bout;
 }
