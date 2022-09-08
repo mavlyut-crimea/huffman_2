@@ -74,7 +74,7 @@ void encode(char const* in, std::basic_ostream<char>& fout) {
   fout << tr;
   obstream bout(fout);
   while (fin >> tmp_char) {
-    bout << tr.get_code(to_char_t(tmp_char));
+    tr.get_code(to_char_t(tmp_char)).print_optimized(bout);
   }
   bout.flush();
   worker::end_work(fin);
@@ -106,7 +106,7 @@ static void read_all_codes(ibstream& bin, tree<code_t>& tr) {
   weight_t len;
   std::string tmp;
   for (size_t i = 0; i < MAX_SIZE; i++) {
-    bin >> len;
+    bin.read(len);
     tmp = read_bin_string(bin, len, len);
     tr.push(tmp, from_char_t(i));
   }
@@ -120,7 +120,8 @@ static void read_used_codes(ibstream& bin, tree<code_t>& tr, size_t cnt) {
   weight_t len;
   std::string tmp;
   for (size_t i = 0; i < cnt; i++) {
-    bin >> letter >> len;
+    bin.read(letter);
+    bin.read(len);
     tmp = read_bin_string(bin, len);
     tr.push(tmp, letter);
   }
@@ -132,7 +133,6 @@ template <typename code_t = huffman_code_type_examples::ct_default,
 void decode(std::basic_istream<char>& fin,
             std::basic_ostream<char>& fout = std::cout) {
   tree<code_t> tr;
-  ibstream bin(fin);
   char tmp;
   int imode = MODES::UNKNOWN;
   if (!(fin >> std::noskipws >> imode >> tmp)) {
@@ -149,7 +149,9 @@ void decode(std::basic_istream<char>& fin,
       fout << tmp;
     }
     return;
-  } else if (mode == MODES::ALL) {
+  }
+  ibstream bin(fin);        
+  if (mode == MODES::ALL) {
     read_all_codes(bin, tr);
   } else if (mode == MODES::USED) {
     read_used_codes(bin, tr, imode);
@@ -159,7 +161,7 @@ void decode(std::basic_istream<char>& fin,
   bool x;
   auto nd = tr.get_root();
   while (bin) {
-    bin >> x;
+    bin.read(x);
     if ((nd->right == nullptr) != (nd->left == nullptr)) {
       std::cout << "error\n";
     }
