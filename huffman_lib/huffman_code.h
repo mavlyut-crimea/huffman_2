@@ -25,8 +25,7 @@ struct huffman_code_type {
   virtual bool operator[](size_t) const = 0;
 };
 
-std::basic_ostream<char>& operator<<(std::basic_ostream<char>&, huffman_code_type const&);
-obstream& operator<<(obstream&, huffman_code_type const&);
+void print(std::basic_ostream<char>&, huffman_code_type const&);
 
 namespace huffman_code_type_examples {
   struct ct_string : huffman_code_type {
