@@ -49,12 +49,12 @@ void buffered_reader::check() {
 /// ibstream
 
 ibstream::ibstream(std::basic_istream<char>& in)
-    : eof(false), last_byte(false), mod(NEED_READ), in(in >> std::noskipws) {}
+    : tmp_char(0), next_char(0), mod(NEED_READ), in(in >> std::noskipws) {}
 
 ibstream::~ibstream() = default;
 
 void ibstream::read(char& x) {
-  in >> x;
+  in.read(x);
 }
 
 void ibstream::read(bool& x) {
@@ -97,7 +97,7 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
     }
   }
   if (need_endl) {
-    bin >> tmp;
+    bin.read(tmp);
     // TODO: assert: tmp == '\n'
   }
   return ans;
