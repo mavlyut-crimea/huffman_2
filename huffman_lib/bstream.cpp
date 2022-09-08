@@ -6,6 +6,45 @@
 
 #define NEED_READ 100
 #define BUFSIZE 4096
+#define BASE 10
+
+/// buffered reader
+
+buffered_reader::buffered_reader(std::basic_istream<char>& in)
+    : pos(0), cnt(0), buf(BUFSIZE, 0), in(in >> std::noskipws) 
+    { check(); }
+
+buffered_reader::~buffered_reader() = default;
+
+bool buffered_reader::read(char& x) {
+  if (eof())
+    return false;
+  x = buf[pos++];
+  check();
+  return true;
+}
+
+bool buffered_reader::read(size_t& x) {
+  x = 0;
+  if (buf[pos] < '0' || buf[pos] > '9')
+    return false;
+  while (!eof() && buf[pos] >= '0' && buf[pos] <= '9') {
+    (x *= BASE) += buf[pos++] - '0';
+    check();
+  }
+  return true;
+}
+
+bool buffered_reader::eof() const {
+  return cnt == 0;
+}
+
+void buffered_reader::check() {
+  if (pos == cnt) {
+    cnt = in.readsome(buf.data(), BUFSIZE);
+    pos = 0;
+  }
+}
 
 /// ibstream
 
@@ -14,59 +53,31 @@ ibstream::ibstream(std::basic_istream<char>& in)
 
 ibstream::~ibstream() = default;
 
-ibstream& ibstream::operator>>(char& x) {
+void ibstream::read(char& x) {
   in >> x;
-  if (in.eof()) {
-    eof = true;
-  }
-  return *this;
 }
 
-ibstream& ibstream::operator>>(bool& x) {
+void ibstream::read(bool& x) {
   if (!mod || mod == NEED_READ) {
-    if (mod == NEED_READ) {
-      in >> next_char >> next_next_char;
-    }
+    if (mod == NEED_READ)
+      in.read(next_char);
     tmp_char = next_char;
-    next_char = next_next_char;
-    in >> next_next_char;
-    if (in.eof()) {
-      eof = true;
-      last_byte = true;
-      mod = next_next_char - '0';
-    } else {
+    in.read(next_char);
+    if (in.eof())
+      mod = next_char - '0';
+    else
       mod = BYTESIZE;
-    }
   }
+  mod = std::max<size_t>(1, std::min<size_t>(BYTESIZE, mod));
   x = (tmp_char >> (--mod)) & 1;
-  return *this;
 }
 
-ibstream& ibstream::operator>>(int& x) {
-  // for entering mode
+void ibstream::read(size_t& x) {
   char ws;
-  if (in >> x) {
-    in >> ws;
-  } else {
-    throw std::runtime_error("File was broken: no mode");
-  }
-  if (in.eof()) {
-    eof = true;
-  }
-  return *this;
-}
-
-ibstream& ibstream::operator>>(size_t& x) {
-  char ws;
-  if (in >> x) {
-    in >> ws;
-  } else {
-    throw std::runtime_error("File was broken: no mode");
-  }
-  if (in.eof()) {
-    eof = true;
-  }
-  return *this;
+  if (in.read(x))
+    in.read(ws);
+  else
+    throw std::runtime_error("File was broken: no integers");
 }
 
 std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
@@ -74,13 +85,13 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
   std::string ans;
   char tmp;
   for (size_t i = 0; i < len / BYTESIZE; i++) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (len % BYTESIZE) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = len % BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
@@ -93,7 +104,7 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
 }
 
 ibstream::operator bool() const {
-  return !eof || !last_byte || mod;
+  return !in.eof() || mod;
 }
 
 /// obstream
@@ -105,21 +116,21 @@ obstream::~obstream() {
   flush();
 }
 
-obstream& obstream::operator<<(bool x) {
+void obstream::print(bool x) {
   if (mod == BYTESIZE) {
     append(tmp_char);
     tmp_char = 0;
     mod = 0;
   }
   tmp_char <<= 1;
-  if (x) {
+  if (x) 
     tmp_char++;
-  }
   mod++;
-  return *this;
 }
 
 void obstream::flush() {
+  if (buf.empty())
+    return;
   out << buf;
   if (mod) {
     out << tmp_char << mod;
@@ -131,7 +142,7 @@ void obstream::flush() {
 }
 
 void obstream::append(char ch) {
-  buf += ch;
+  buf.push_back(ch);
   if (buf.size() > BUFSIZE) {
     out << buf;
     buf.clear();
