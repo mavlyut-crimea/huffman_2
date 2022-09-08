@@ -14,15 +14,14 @@ ibstream::ibstream(std::basic_istream<char>& in)
 
 ibstream::~ibstream() = default;
 
-ibstream& ibstream::operator>>(char& x) {
+void ibstream::read(char& x) {
   in >> x;
   if (in.eof()) {
     eof = true;
   }
-  return *this;
 }
 
-ibstream& ibstream::operator>>(bool& x) {
+void& ibstream::read(bool& x) {
   if (!mod || mod == NEED_READ) {
     if (mod == NEED_READ) {
       in >> next_char >> next_next_char;
@@ -39,34 +38,18 @@ ibstream& ibstream::operator>>(bool& x) {
     }
   }
   x = (tmp_char >> (--mod)) & 1;
-  return *this;
 }
 
-ibstream& ibstream::operator>>(int& x) {
-  // for entering mode
+void ibstream::read(size_t& x) {
   char ws;
   if (in >> x) {
     in >> ws;
   } else {
-    throw std::runtime_error("File was broken: no mode");
+    throw std::runtime_error("File was broken: no integers");
   }
   if (in.eof()) {
     eof = true;
   }
-  return *this;
-}
-
-ibstream& ibstream::operator>>(size_t& x) {
-  char ws;
-  if (in >> x) {
-    in >> ws;
-  } else {
-    throw std::runtime_error("File was broken: no mode");
-  }
-  if (in.eof()) {
-    eof = true;
-  }
-  return *this;
 }
 
 std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
@@ -74,19 +57,19 @@ std::string read_bin_string(ibstream& bin, size_t len, bool need_endl) {
   std::string ans;
   char tmp;
   for (size_t i = 0; i < len / BYTESIZE; i++) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (len % BYTESIZE) {
-    bin >> tmp;
+    bin.read(tmp);
     for (size_t k = len % BYTESIZE; k --> 0; ) {
       ans += (tmp >> k) & 1 ? '1' : '0';
     }
   }
   if (need_endl) {
-    bin >> tmp;
+    bin.read(tmp);
     // TODO: assert: tmp == '\n'
   }
   return ans;
@@ -105,7 +88,7 @@ obstream::~obstream() {
   flush();
 }
 
-obstream& obstream::operator<<(bool x) {
+void obstream::print(bool x) {
   if (mod == BYTESIZE) {
     append(tmp_char);
     tmp_char = 0;
@@ -116,10 +99,11 @@ obstream& obstream::operator<<(bool x) {
     tmp_char++;
   }
   mod++;
-  return *this;
 }
 
 void obstream::flush() {
+  if (buf.empty())
+    return;
   out << buf;
   if (mod) {
     out << tmp_char << mod;
@@ -131,7 +115,7 @@ void obstream::flush() {
 }
 
 void obstream::append(char ch) {
-  buf += ch;
+  buf.oush_back(ch);
   if (buf.size() > BUFSIZE) {
     out << buf;
     buf.clear();
