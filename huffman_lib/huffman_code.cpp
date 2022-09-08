@@ -23,7 +23,8 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
     tmp = 0;
     for (size_t j = 0; j < BYTESIZE; j++) {
       tmp <<= 1;
-      if (operator[](i + j)) tmp++;
+      if (operator[](i + j)) 
+        tmp++;
     }
     out << tmp;
   }
@@ -31,7 +32,8 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
     tmp = 0;
     for (size_t i = end; i < sz; i++) {
       tmp <<= 1;
-      if (operator[](i)) tmp++;
+      if (operator[](i)) 
+        tmp++;
     }
     out << tmp;
   }
@@ -39,12 +41,6 @@ void huffman_code_type::print(std::basic_ostream<char>& out) const {
 
 void huffman_code_type::print(obstream& bout) const {
   for (size_t i = 0; i < size(); i++) {
-    bout << operator[](i);
+    bout.print(operator[](i));
   }
-}
-
-obstream& operator<<(obstream& bout, huffman_code_type const& x) {
-  x.print_optimized(bout);
-//  x.print(bout);
-  return bout;
 }
