@@ -8,7 +8,7 @@
 using namespace huffman_code_type_examples;
 
 MODES get_mode_from_file(char const* name) {
-  std::ifstream fin(name, std::ios_base::in);
+  std::ifstream fin(name, std::ios_base::binary | std::ios_base::in);
   int mode;
   fin >> mode;
   fin.close();
@@ -22,7 +22,8 @@ std::ostream& operator<<(std::ostream& out, MODES x) {
 }
 
 void ASSERT_EQ_FILES(char const* in1, char const* in2) {
-    std::ifstream fin1(in1, std::ios_base::in), fin2(in2, std::ios_base::in);
+    std::ifstream fin1(in1, std::ios_base::binary | std::ios_base::in)
+                , fin2(in2, std::ios_base::binary | std::ios_base::in);
     char tmp1 = 0, tmp2 = 0;
     while (!fin1.eof() && !fin2.eof()) {
       fin1 >> tmp1;
@@ -195,7 +196,9 @@ TEST(full_abacaba, ct_default) {
   for (size_t i = 0; i < end; i++) {
     fout << get(i);
   }
+  fout.close();
   htest<ct_default>("full_abacaba");
+  std::filesystem::remove(new_path);
 }
 
 // 1 Gb
@@ -207,6 +210,7 @@ TEST(bigfile, ct_default) {
   }
   fout.close();
   htest<ct_default>("bigfile");
+  std::filesystem::remove(new_path);
 }
 
 #endif
