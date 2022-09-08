@@ -190,8 +190,8 @@ static char get(size_t i) {
 
 // 63 Mb, 1023 Kb, 1023 b
 TEST(full_abacaba, ct_default) {
-  srand(time(nullptr));
-  std::ofstream fout(path + "/files/full_abacaba", std::ios_base::out);
+  std::string new_path = path + "/files/full_abacaba";
+  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
   size_t end = (1L << ALPHABET_SIZE) - 1;
   for (size_t i = 0; i < end; i++) {
     fout << get(i);
@@ -204,7 +204,8 @@ TEST(full_abacaba, ct_default) {
 // 1 Gb
 TEST(bigfile, ct_default) {
   srand(time(nullptr));
-  std::ofstream fout(path + "/files/bigfile", std::ios_base::out);
+  std::string new_path = path + "/files/bigfile";
+  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
   for (size_t i = 0; i < 1024 * 1024 * 1024; i++) {
     fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
   }
