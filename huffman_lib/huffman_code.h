@@ -107,7 +107,7 @@ namespace huffman_code_type_examples {
         bout.print_int<_int_type>(_vec[i]);
       }
       for (size_t i = pos_end; i --> 0; ) {
-        bout << ((_vec.back() >> i) & 1);
+        bout.print((_vec.back() >> i) & 1);
       }
     }
 
