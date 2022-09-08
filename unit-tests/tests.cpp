@@ -87,7 +87,6 @@ void htest(std::string const& input) {
   cat_file(dec);
 // #endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
-  ASSERT_EQ_FILES(enc.c_str(), (path + "/files/test_elf_N26huffman_code_type_examples9ct_stringE.huf").c_str());
 #ifndef LEAVE_FILES
   std::filesystem::remove(enc);
   std::filesystem::remove(dec);
