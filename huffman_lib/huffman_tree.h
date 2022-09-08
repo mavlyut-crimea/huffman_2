@@ -111,13 +111,15 @@ struct tree {
     if (x.a_mode_is_better()) {
       out << MODES::ALL << '\n';
       for (code_t const& i : x.codes) {
-        out << i << '\n';
+        print(out, i);
+        out << '\n';
       }
     } else {
       out << x.cnt_used << '\n';
       for (size_t i = 0; i < MAX_SIZE; i++) {
         if (x.weights[i]) {
-          out << from_char_t(i) << x.codes[i];
+          out << from_char_t(i);
+          print(out, x.codes[i]);
         }
       }
     }
