@@ -16,10 +16,9 @@ struct ibstream {
   ibstream& operator=(ibstream const&) = delete;
   ~ibstream();
 
-  ibstream& operator>>(char&);
-  ibstream& operator>>(bool&);
-  ibstream& operator>>(size_t&);
-  ibstream& operator>>(int&);
+  void read(char&);
+  void read(bool&);
+  void read(size_t&);
   explicit operator bool() const;
 
 private:
@@ -37,13 +36,13 @@ struct obstream {
   obstream& operator=(obstream const&) = delete;
   ~obstream();
 
-  obstream& operator<<(bool);
+  void print(bool);
 
   template <typename T,
       typename std::enable_if<std::is_integral<T>::value, void*>::type = nullptr>
   void print_int(T const& x) {
     if (mod == BYTESIZE) {
-      buf += tmp_char;
+      buf.push_back(tmp_char);
       mod = 0;
     }
     size_t bitcnt = sizeof(T) * BYTESIZE;
@@ -68,8 +67,8 @@ struct obstream {
 private:
   size_t mod;
   char tmp_char;
-  std::basic_ostream<char>& out;
   std::string buf;
+  std::basic_ostream<char>& out;
 
   void append(char);
 };
