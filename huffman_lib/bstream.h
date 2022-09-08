@@ -5,10 +5,30 @@
 #ifndef HUFFMAN_BSTREAM_H
 #define HUFFMAN_BSTREAM_H
 
-#include <iostream>
 #include <type_traits>
+#include <iostream>
+#include <vector>
 
 #define BYTESIZE 8
+
+struct buffered_reader {
+  buffered_reader(std::basic_istream<char>& = std::cin);
+  buffered_reader(buffered_reader const&) = delete;
+  buffered_reader& operator=(buffered_reader const&) = delete;
+  ~buffered_reader();
+
+  bool read(char&);
+  bool read(size_t&);
+  bool eof() const;
+
+private:
+  size_t pos;
+  size_t cnt;
+  std::string buf;
+  std::basic_istream<char>& in;
+
+  void check();
+};
 
 struct ibstream {
   ibstream(std::basic_istream<char>& = std::cin);
@@ -16,17 +36,15 @@ struct ibstream {
   ibstream& operator=(ibstream const&) = delete;
   ~ibstream();
 
-  ibstream& operator>>(char&);
-  ibstream& operator>>(bool&);
-  ibstream& operator>>(size_t&);
-  ibstream& operator>>(int&);
+  void read(char&);
+  void read(bool&);
+  void read(size_t&);
   explicit operator bool() const;
 
 private:
-  char tmp_char, next_char, next_next_char;
-  bool eof, last_byte;
+  char tmp_char, next_char;
   size_t mod;
-  std::basic_istream<char>& in;
+  buffered_reader in;
 };
 
 std::string read_bin_string(ibstream&, size_t, bool = false);
@@ -37,13 +55,13 @@ struct obstream {
   obstream& operator=(obstream const&) = delete;
   ~obstream();
 
-  obstream& operator<<(bool);
+  void print(bool);
 
   template <typename T,
       typename std::enable_if<std::is_integral<T>::value, void*>::type = nullptr>
   void print_int(T const& x) {
     if (mod == BYTESIZE) {
-      buf += tmp_char;
+      buf.push_back(tmp_char);
       mod = 0;
     }
     size_t bitcnt = sizeof(T) * BYTESIZE;
@@ -57,9 +75,8 @@ struct obstream {
     for (size_t i = BYTESIZE - mod; i + BYTESIZE < bitcnt - 1; i += BYTESIZE) {
       append((x >> (bitcnt - i - BYTESIZE)) & ((1 << BYTESIZE) - 1));
     }
-    if (!mod) {
+    if (!mod)
       mod = BYTESIZE;
-    }
     tmp_char = (x & ((1 << mod) - 1));
   }
 
@@ -68,9 +85,9 @@ struct obstream {
 private:
   size_t mod;
   char tmp_char;
-  std::basic_ostream<char>& out;
   std::string buf;
-
+  std::basic_ostream<char>& out;
+  
   void append(char);
 };
 
