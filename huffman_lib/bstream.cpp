@@ -21,7 +21,7 @@ void ibstream::read(char& x) {
   }
 }
 
-void& ibstream::read(bool& x) {
+void ibstream::read(bool& x) {
   if (!mod || mod == NEED_READ) {
     if (mod == NEED_READ) {
       in >> next_char >> next_next_char;
@@ -115,7 +115,7 @@ void obstream::flush() {
 }
 
 void obstream::append(char ch) {
-  buf.oush_back(ch);
+  buf.push_back(ch);
   if (buf.size() > BUFSIZE) {
     out << buf;
     buf.clear();
