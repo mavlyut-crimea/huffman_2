@@ -8,24 +8,32 @@ find_package(GTest REQUIRED)
 # NOTE: huffman functional must be implemented as library and linked to the executables
 # NOTE: tool target name must be huffman-tool
 
-include_directories(huffman_lib)
-
-set(lib_huffman
-        huffman_lib/bstream.cpp
-        huffman_lib/bstream.h
-        huffman_lib/huffman.h
-        huffman_lib/huffman_code.cpp
-        huffman_lib/huffman_code.h
-        huffman_lib/huffman_tree.h
-        huffman_lib/huffman_codes_examples/ct_string.cpp
-        huffman_lib/huffman_codes_examples/ct_vector_bool.cpp
+# TODO: remove headers from library
+add_library(huffman STATIC
+        huffman_lib/include/binary_reader.h
+        huffman_lib/include/binary_writer.h
+        huffman_lib/include/consts.h
+        huffman_lib/include/counter.h
+        huffman_lib/include/huffman.h
+        huffman_lib/include/huffman_tree.h
+        huffman_lib/binary_reader.cpp
+        huffman_lib/binary_writer.cpp
+        huffman_lib/counter.cpp
+        huffman_lib/huffman.cpp
+        huffman_lib/huffman_tree.cpp
         )
 
-add_executable(huffman-tool ${lib_huffman} huffman-tool.cpp)
+add_executable(tests
+        unit-tests/tests.cpp
+        )
 
-add_executable(tests ${lib_huffman} unit-tests/tests.cpp)
+add_executable(huffman-tool
+        huffman-tool.cpp
+        )
 
-# don't forget to use same flags at your library
+#add_definitions(-D_ENABLE_BIG_TESTS)
+
+# don't forget to use same flags at your library 
 if (NOT MSVC)
   target_compile_options(tests PRIVATE -Wall -Wno-sign-compare -pedantic)
 endif()
@@ -37,16 +45,13 @@ if (USE_SANITIZERS)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_compile_options(tests PUBLIC -std=c++17)
+  target_compile_options(tests PUBLIC -stdlib=libc++)
 endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
-  if (NOT USE_SANITIZERS)
-    add_definitions(-DLOG)
-  endif()
-elseif (CMAKE_BUILD_TYPE MATCHES "Release")
-  add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
 target_link_libraries(tests GTest::gtest GTest::gtest_main)
+target_link_libraries(tests huffman)
+target_link_libraries(huffman-tool huffman)

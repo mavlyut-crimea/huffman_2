@@ -2,20 +2,19 @@
 // Created by mavlyut on 08.08.22.
 //
 
+#include "huffman_lib/include/huffman.h"
 #include <iostream>
-#include <set>
 #include <map>
+#include <set>
 #include <utility>
-#include "huffman_lib/huffman.h"
 
-using namespace huffman_code_type_examples;
 using flags_container = std::map<char, std::string>;
 
 struct parser_exception : std::runtime_error {
   explicit parser_exception(std::string const& m)
       : std::runtime_error(
             "huffman-tool: " + m + "\nUsage: huffman-tool " +
-            "(-c [COMPRESS_MODE] | -d) [CODE_TYPE] --input FILE_IN --output FILE_OUT" +
+            "(-c [COMPRESS_MODE] | -d) --input FILE_IN --output FILE_OUT" +
             "\nTry `huffman-tool --help` for more information.\n") {}
 };
 
@@ -140,7 +139,7 @@ int main(int argc, char** argv) {
     pk.push(std::string(argv[i]));
   }
   if (pk.exist('h') || argc == 1) {
-    std::cout << "Usage: huffman-tool (-c [COMPRESS_MODE -S SMALL_SIZE] | -d) [CODE_TYPE] "
+    std::cout << "Usage: huffman-tool (-c [COMPRESS_MODE -S SMALL_SIZE] | -d) "
               << "--input FILE_IN --output FILE_OUT\n"
               << "FLAGS:\n"
               << "\t-h, --help                more information\n"
@@ -148,10 +147,6 @@ int main(int argc, char** argv) {
               << "\t-d, --decompress          decode file\n"
               << "\t-i, --input FILE_IN       input file\n"
               << "\t-o, --output FILE_OUT     output file\n"
-              << "\n\tCODE_TYPE_DEFAULT:\n"
-              << "\t\t-s, --ct=string                           (default code type)\n"
-              << "\t\t-I, --ct=vector_ints (8 | 16 | 32 | 64)   (it doesn't always work correctly)\n"
-              << "\t\t-b, --ct=vector_bool\n"
               << "\nMore information: https://github.com/mavlyut-crimea/huffman-mavlyut.\n"
         ;
     return 0;
@@ -162,27 +157,11 @@ int main(int argc, char** argv) {
     if (pk.exist('d')) {
       throw unsupported_option_exception("-cd");
     }
-    if (pk.exist('s')) {
-      encode<ct_string>(in, out);
-    } else if (pk.exist('I')) {
-      encode<ct_vector_ints<int>>(in, out);
-    } else if (pk.exist('b')) {
-      encode<ct_vector_bool>(in, out);
-    } else {
-      encode<ct_default>(in, out);
-    }
+    encode(in, out);
   } else if (pk.exist('d')) {
     if (pk.exist('c')) {
       throw unsupported_option_exception("-cd");
     }
-    if (pk.exist('s')) {
-      decode<ct_string>(in, out);
-    } else if (pk.exist('I')) {
-      decode<ct_vector_ints<int>>(in, out);
-    } else if (pk.exist('b')) {
-      decode<ct_vector_bool>(in, out);
-    } else {
-      decode<ct_default>(in, out);
-    }
+    decode(in, out);
   }
 }
