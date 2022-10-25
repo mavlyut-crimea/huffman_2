@@ -24,7 +24,11 @@ code_t binary_reader::next_code() {
 }
 
 bool binary_reader::next_bool() {
-  check();
+  if (pos == 0) {
+    tmp_char = buf[cnt++];
+    check_buffer();
+    pos = (len == 0 ? rem : BYTESIZE);
+   }
   bool ans = (tmp_char >> (--pos)) & 1;
   return ans;
 }
@@ -39,19 +43,6 @@ void binary_reader::set_rem() {
   tmp_char = buf[1];
   cnt = 2;
   pos = (len <= cnt ? rem : BYTESIZE);
-  check_buffer();
-}
-
-// TODO: remove extra call of check_buffer
-void binary_reader::check() {
-  check_buffer();
-  if (pos == 0) {
-    check_buffer();
-    tmp_char = buf[cnt++];
-    check_buffer();
-    pos = (len == 0 ? rem : BYTESIZE);
-    check_buffer();
-  }
   check_buffer();
 }
 

@@ -63,6 +63,10 @@ void htest(std::string const& input) {
 #endif
 }
 
+TEST(first, test) {
+  htest<false>("/home/mavlyut/huffman-mavlyut/huffman-tool.cpp");
+}
+
 #define HTEST(input) TEST(correctness, input) { htest(#input); }
 
 TEST(special, file_not_found) {
@@ -123,16 +127,16 @@ static char get(size_t i) {
 }
 
 // 63 Mb, 1023 Kb, 1023 b
-TEST(full_abacaba, ct_default) {
- std::string new_path = path + "/files/full_abacaba";
- std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
- size_t end = (1L << ALPHABET_SIZE) - 1;
- for (size_t i = 0; i < end; i++) {
-   fout << get(i);
- }
- htest("full_abacaba");
- std::filesystem::remove(new_path);
-}
+//TEST(full_abacaba, ct_default) {
+//  std::string new_path = path + "/files/full_abacaba";
+//  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+//  size_t end = (1L << ALPHABET_SIZE) - 1;
+//  for (size_t i = 0; i < end; i++) {
+//    fout << get(i);
+//  }
+//  htest("full_abacaba");
+//  std::filesystem::remove(new_path);
+//}
 
 // 1 Gb
 TEST(bigfile, ct_default) {

@@ -8,17 +8,6 @@
 #include "include/huffman_tree.h"
 #include <fstream>
 
-std::ostream& print(std::ostream& out, ind_t i, std::pair<int_t, len_t> const& p) {
-  if (p.second) {
-    out << static_cast<char>(i) << ' ';
-    for (ind_t j = p.second; j --> 0; ) {
-      out << ((p.first >> j) & 1);
-    }
-    out << '\n';
-  }
-  return out;
-}
-
 static void check_stream(std::istream& in) {
   if (!in.good())
     throw std::runtime_error("Broken file");

@@ -8,8 +8,8 @@ binary_writer::binary_writer(std::ostream& out)
     : tmp_char(0), pos(0), out(out) {}
 
 binary_writer::~binary_writer() {
-  buf.push_back(tmp_char);
-//  buf.push_back(pos);
+  if (pos != 0)
+    buf.push_back(tmp_char);
   flush();
 }
 
@@ -36,8 +36,6 @@ void binary_writer::write(code_t const& x) {
 }
 
 void binary_writer::flush() {
-//  for (char i : buf)
-//    out << static_cast<int>(i) << ' ';
   out << buf;
   buf.clear();
 }
