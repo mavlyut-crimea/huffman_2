@@ -64,11 +64,13 @@ binary_writer& write(binary_writer& bw, encode_huffman_tree const& tr) {
   ind_t tmp_ind;
   for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
     tmp_ind = tr.char_to_ind[i];
+    std::cout << tmp_ind << ' ';
     if (tmp_ind == -1)
       bw.write(0ul);
     else
       bw.write(tr.codes[tmp_ind].second).write(tr.codes[tmp_ind].first);
   }
+  std::cout << '\n';
   tmp_ind = tr.char_to_ind.back();
   if (tmp_ind == 0 && !tr.nodes.empty())
     tmp_ind = BYTESIZE;
