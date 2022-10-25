@@ -27,6 +27,15 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
 
 const std::string path = "unit-tests";
 
+void cat_file(std::string const& name) {
+  std::ifstream fin(name, std::ifstream::in);
+  char tmp;
+  while (fin >> tmp) {
+    std::cout << tmp;
+  }
+  fin.close();
+}
+
 template <bool change = true>
 void htest(std::string const& input) {
 #ifdef LOG
@@ -64,6 +73,7 @@ void htest(std::string const& input) {
   cat_file(enc);
   cat_file(dec);
 #endif
+  cat_file(dec);
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
 #ifndef LEAVE_FILES
   std::filesystem::remove(enc);
