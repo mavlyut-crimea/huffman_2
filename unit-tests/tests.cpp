@@ -18,7 +18,7 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
                 << tmp1 << " != "
                 << tmp2 << '\n';
     i++;
-    ASSERT_TRUE(tmp1 == tmp2);
+    ASSERT_EQ(tmp1, tmp2);
   }
   ASSERT_TRUE(fin1.eof() && fin2.eof());
   fin1.close();
