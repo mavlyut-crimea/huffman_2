@@ -27,6 +27,9 @@ encode_huffman_tree::encode_huffman_tree(counter const& cntr)
   std::priority_queue<std::pair<weight_t, ind_t>
                       , std::vector<std::pair<weight_t, ind_t>>
                       , std::greater<>> q;
+  for (ind_t i = 0; i < ALPHABET_SIZE; i++)
+    std::cout << cntr[i] << " ";
+  std::cout << "\n";
   for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
     if (cntr[i] > 0) {
       char_to_ind[i] = nodes.size();
