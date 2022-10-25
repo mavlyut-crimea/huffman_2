@@ -10,13 +10,8 @@ counter::counter() : cnts(ALPHABET_SIZE, 0) {}
 
 counter::~counter() = default;
 
-void counter::append(char x, weight_t sz) {
-  cnts[static_cast<char_t>(x + ALPHABET_SIZE / 2)] += sz;
-}
-
-void counter::append(std::string const& s) {
-  for (char i : s)
-    append(i);
+void counter::append(char x) {
+  cnts[static_cast<char_t>(static_cast<int>(x) + ALPHABET_SIZE / 2)]++;
 }
 
 void counter::read_from_file(char const* in) {
@@ -30,12 +25,6 @@ void counter::read_from_file(char const* in) {
     }
   }
   fin.close();
-}
-
-void counter::parse_header(char const* in) {
-  std::ifstream fin(in, std::ifstream::in);
-  for (ind_t i = 0; i < ALPHABET_SIZE; i++)
-    fin >> cnts[i];
 }
 
 weight_t counter::operator[](ind_t x) const {
