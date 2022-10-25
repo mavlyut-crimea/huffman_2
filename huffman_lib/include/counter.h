@@ -12,10 +12,8 @@ struct counter {
   counter();
   ~counter();
 
-  void append(char, weight_t = 1);
-  void append(std::string const&);
+  void append(char);
   void read_from_file(char const*);
-  void parse_header(char const*);
   weight_t operator[](ind_t) const;
 
 private:
