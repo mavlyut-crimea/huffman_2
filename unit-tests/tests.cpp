@@ -64,10 +64,6 @@ void htest(std::string const& input) {
 #endif
 }
 
-TEST(first, test) {
-  htest<false>("/home/mavlyut/huffman-mavlyut/huffman-tool.cpp");
-}
-
 #define HTEST(input) TEST(correctness, input) { htest(#input); }
 
 TEST(special, file_not_found) {
@@ -78,7 +74,7 @@ TEST(special, file_not_found) {
 HTEST(empty)
 
 // 7 b
-//HTEST(one_char)
+HTEST(one_char)
 
 // 127 b
 HTEST(simple)
