@@ -1,3 +1,4 @@
+#include "../huffman_lib/include/consts.h"
 #include "../huffman_lib/include/huffman.h"
 #include "gtest/gtest.h"
 #include <ctime>
@@ -127,19 +128,21 @@ static char get(size_t i) {
 }
 
 // 63 Mb, 1023 Kb, 1023 b
-//TEST(full_abacaba, ct_default) {
-//  std::string new_path = path + "/files/full_abacaba";
-//  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
-//  size_t end = (1L << ALPHABET_SIZE) - 1;
-//  for (size_t i = 0; i < end; i++) {
-//    fout << get(i);
-//  }
-//  htest("full_abacaba");
-//  std::filesystem::remove(new_path);
-//}
+TEST(correctness, full_abacaba) {
+  std::string new_path = path + "/files/full_abacaba";
+  std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
+  size_t end = (1L << 26) - 1;
+  for (size_t i = 0; i < end; i++) {
+    fout << get(i);
+  }
+  fout.close();
+  std::cout << "File generated\n";
+  htest("full_abacaba");
+  std::filesystem::remove(new_path);
+}
 
 // 1 Gb
-TEST(bigfile, ct_default) {
+TEST(correctness, bigfile) {
   srand(time(nullptr));
   std::string new_path = path + "/files/bigfile";
   std::ofstream fout(new_path, std::ios_base::binary | std::ios_base::out);
@@ -147,6 +150,7 @@ TEST(bigfile, ct_default) {
     fout << static_cast<char>(rand() % ALPHABET_SIZE + 'a');
   }
   fout.close();
+  std::cout << "File generated\n";
   htest("bigfile");
   std::filesystem::remove(new_path);
 }
