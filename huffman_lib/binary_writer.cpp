@@ -14,7 +14,7 @@ binary_writer::~binary_writer() {
 }
 
 binary_writer& binary_writer::write(int_t x) {
-  out << x << ' ';
+  out << x << " ";
   return *this;
 }
 
