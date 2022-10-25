@@ -28,11 +28,11 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
 const std::string path = "unit-tests";
 
 void cat_file(std::string const& name) {
-  std::cout << name << '\n';
   std::ifstream fin(name, std::ifstream::in);
+  std::cout << name << '\n';
   char tmp;
   while (fin >> tmp) {
-    std::cout << tmp;
+    std::cout << static_cast<int>(tmp) << ' ';
   }
   std::cout << '\n';
   fin.close();
