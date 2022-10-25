@@ -35,8 +35,10 @@ encode_huffman_tree::encode_huffman_tree(counter const& cntr)
     }
   }
   if (q.size() == 1) {
-    char_t letter = nodes[0].value;
-    q.emplace(q.top().first, letter + 1 - 2 * (letter % 2));
+    ind_t letter = nodes[0].value + 1 - 2 * (nodes[0].value % 2);
+    char_to_ind[letter] = 1;
+    nodes.emplace_back(letter, 1);
+    q.emplace(1, 1);
   }
   while (q.size() > 1) {
     auto a = q.top(); q.pop();
