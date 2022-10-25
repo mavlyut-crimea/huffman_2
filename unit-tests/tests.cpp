@@ -8,9 +8,16 @@
 void ASSERT_EQ_FILES(char const* in1, char const* in2) {
   std::ifstream fin1(in1, std::ios_base::in), fin2(in2, std::ios_base::in);
   char tmp1 = 0, tmp2 = 0;
+  size_t i = 0;
   while (!fin1.eof() && !fin2.eof()) {
     fin1 >> tmp1;
     fin2 >> tmp2;
+    if (tmp1 != tmp2)
+      std::cout << "At position "
+                << i << " found "
+                << tmp1 << " != "
+                << tmp2 << '\n';
+    i++;
     ASSERT_TRUE(tmp1 == tmp2);
   }
   ASSERT_TRUE(fin1.eof() && fin2.eof());
