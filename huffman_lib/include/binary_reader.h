@@ -25,8 +25,8 @@ private:
   std::streamsize cnt, len;
   std::string buf;
   std::istream& in;
+  std::basic_streambuf<char, std::char_traits<char>>* rdbuf;
 
-  void check();
   void check_buffer();
 };
 

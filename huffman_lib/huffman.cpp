@@ -39,10 +39,8 @@ void decode(char const* in, char const* out) {
   while (!br.eof()) {
     bool b = br.next_bool();
     tr.move(tmp_node, b);
-//    std::cout << b;
     if (tr.is_leaf(tmp_node)) {
       fout << tr.get_char(tmp_node);
-//      std::cout << tr.get_char(tmp_node);
       tmp_node = 0;
     }
   }

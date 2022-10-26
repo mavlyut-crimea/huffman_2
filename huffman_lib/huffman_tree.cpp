@@ -18,6 +18,8 @@ node::node(char_t c, ind_t i): value(c), ind(i), left(-1), right(-1)  {}
 node::node(ind_t i, node const& l, node const& r)
     : value(l.value + r.value), ind(i), left(l.ind), right(r.ind) {}
 
+node::~node() = default;
+
 bool node::is_leaf() const {
   return left == -1 && right == -1;
 }
@@ -60,20 +62,22 @@ encode_huffman_tree::encode_huffman_tree(counter const& cntr)
   char_to_ind[ALPHABET_SIZE] = rem;
 }
 
-encode_huffman_tree::~encode_huffman_tree() = default;
+encode_huffman_tree::~encode_huffman_tree() {
+  char_to_ind.clear();
+  nodes.clear();
+  codes.clear();
+}
 
 // TODO: print optimized
 binary_writer& write(binary_writer& bw, encode_huffman_tree const& tr) {
   ind_t tmp_ind;
   for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
     tmp_ind = tr.char_to_ind[i];
-    std::cout << tmp_ind << ' ';
     if (tmp_ind == -1)
       bw.write(0ul);
     else
       bw.write(tr.codes[tmp_ind].second).write(tr.codes[tmp_ind].first);
   }
-  std::cout << '\n';
   tmp_ind = tr.char_to_ind.back();
   if (tmp_ind == 0 && !tr.nodes.empty())
     tmp_ind = BYTESIZE;
@@ -81,10 +85,12 @@ binary_writer& write(binary_writer& bw, encode_huffman_tree const& tr) {
   return bw;
 }
 
+static constexpr code_t EMPTY_CODE = { 0, 0 };
+
 code_t encode_huffman_tree::get_code(char x) const {
   ind_t i = char_to_ind[to_char_t(x)];
   if (i == -1)
-    return { 0, 0 };
+    return EMPTY_CODE;
   return codes[i];
 }
 
@@ -107,7 +113,9 @@ decode_huffman_tree::decode_huffman_tree(binary_reader& br) {
   br.set_rem();
 }
 
-decode_huffman_tree::~decode_huffman_tree() = default;
+decode_huffman_tree::~decode_huffman_tree() {
+  nodes.clear();
+}
 
 void decode_huffman_tree::push_code(char_t c, code_t const& p) {
   if (p.second == 0)

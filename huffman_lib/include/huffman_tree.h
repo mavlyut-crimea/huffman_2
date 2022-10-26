@@ -16,12 +16,13 @@ struct node {
   friend struct decode_huffman_tree;
 
   node(char_t, ind_t);
-  node(ind_t, node const&, node const& = node('$', -1));
+  node(ind_t, node const&, node const&);
+  ~node();
+
   bool is_leaf() const;
   friend void decode(char const*, char const*);
 
 private:
-//  static const node EMPTY_LEAF;
   char_t value;
   ind_t ind, left, right;
 };
