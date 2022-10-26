@@ -17,13 +17,16 @@ void counter::append(char x) {
 void counter::read_from_file(char const* in) {
   std::ifstream fin(in, std::ifstream::in);
   std::array<char, BUFSIZE> buf{};
-  std::streamsize sz = -1;
-  while (sz != 0) {
-    sz = fin.readsome(buf.data(), BUFSIZE);
-    for (size_t i = 0; i < sz; i++) {
-      append(buf[i]);
-    }
-  }
+//   std::streamsize sz = -1;
+//   while (sz != 0) {
+//     sz = fin.readsome(buf.data(), BUFSIZE);
+//     for (size_t i = 0; i < sz; i++) {
+//       append(buf[i]);
+//     }
+//   }
+  char tmp;
+  while (fin >> tmp)
+    append(tmp);
   fin.close();
 }
 
