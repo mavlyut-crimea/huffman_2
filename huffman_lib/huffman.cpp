@@ -21,7 +21,7 @@ void encode(char const* in, char const* out) {
   check_stream(fin >> std::noskipws);
   std::ofstream fout(out, std::ifstream::out);
   binary_writer bw(fout);
-  write(bw, tr);
+  write(bw, tr, cntr.get_array());
   char tmp = 0;
   while (fin >> tmp)
     bw.write(tr.get_code(tmp));

@@ -15,15 +15,18 @@ binary_reader::~binary_reader() {
   buf.clear();
 }
 
-code_t binary_reader::next_code() {
+len_t binary_reader::next_len() {
   len_t l = 0;
-  int_t c = 0;
   if (!(in >> l))
-    throw std::runtime_error("Expected number: length of code");
-  if (l != 0)
-    if (!(in >> c))
-      throw std::runtime_error("Expected number: code");
-  return { c, l };
+    throw std::runtime_error("Expected code");
+  return l;
+}
+
+int_t binary_reader::next_code(len_t l) {
+  int_t c = 0;
+  for (len_t i = 0; i < l; i++)
+    (c <<= 1) += next_bool();
+  return c;
 }
 
 bool binary_reader::next_bool() {

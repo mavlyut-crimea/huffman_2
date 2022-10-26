@@ -15,6 +15,7 @@ struct counter {
 
   void append(char);
   void read_from_file(char const*);
+  std::array<weight_t, ALPHABET_SIZE> const& get_array() const;
   weight_t operator[](ind_t) const;
 
 private:

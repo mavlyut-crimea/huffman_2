@@ -24,7 +24,7 @@ bool node::is_leaf() const {
   return left == -1 && right == -1;
 }
 
-encode_huffman_tree::encode_huffman_tree(counter const& cntr) {
+encode_huffman_tree::encode_huffman_tree(counter& cntr) {
   char_to_ind.fill(-1);
   std::priority_queue<std::pair<weight_t, ind_t>
                       , std::vector<std::pair<weight_t, ind_t>>
@@ -40,7 +40,7 @@ encode_huffman_tree::encode_huffman_tree(counter const& cntr) {
     }
   }
   if (q.size() == 1) {
-    ind_t letter = nodes[0].value + 1 - 2 * (nodes[0].value % 2);
+    char_t letter = nodes[0].value + 1 - 2 * (nodes[0].value % 2);
     char_to_ind[letter] = 1;
     nodes.emplace_back(letter, 1);
     q.emplace(1, 1);
@@ -56,7 +56,7 @@ encode_huffman_tree::encode_huffman_tree(counter const& cntr) {
   ind_t rem = 0;
   for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
     if (cntr[i] != 0) {
-      rem = (rem + (cntr[i] % BYTESIZE) * (codes[char_to_ind[i]].second % BYTESIZE)) % BYTESIZE;
+      rem = (rem + ((1 + cntr[i]) % BYTESIZE) * (codes[char_to_ind[i]].second % BYTESIZE)) % BYTESIZE;
     }
   }
   char_to_ind[ALPHABET_SIZE] = rem;
@@ -67,20 +67,22 @@ encode_huffman_tree::~encode_huffman_tree() {
   codes.clear();
 }
 
-// TODO: print optimized
-binary_writer& write(binary_writer& bw, encode_huffman_tree const& tr) {
-  ind_t tmp_ind;
+binary_writer& write(binary_writer& bw, encode_huffman_tree const& tr
+    , std::array<weight_t, ALPHABET_SIZE> const& cntr) {
+  ind_t tmp_ind = -1;
   for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
     tmp_ind = tr.char_to_ind[i];
-    if (tmp_ind == -1)
-      bw.write(0ul);
-    else
-      bw.write(tr.codes[tmp_ind].second).write(tr.codes[tmp_ind].first);
+    bw.write(cntr[i] == 0 ? 0ul : tr.codes[tmp_ind].second);
   }
   tmp_ind = tr.char_to_ind.back();
   if (tmp_ind == 0 && !tr.nodes.empty())
     tmp_ind = BYTESIZE;
   bw.write(tmp_ind);
+  for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
+    tmp_ind = tr.char_to_ind[i];
+    if (tmp_ind != -1)
+      bw.write(tr.codes[tmp_ind]);
+  }
   return bw;
 }
 
@@ -106,33 +108,34 @@ void encode_huffman_tree::put_codes(ind_t i, int_t ct, len_t l) {
 
 decode_huffman_tree::decode_huffman_tree(binary_reader& br) {
   nodes.emplace_back('$', 0); // fake root
-  for (ind_t i = 0; i < ALPHABET_SIZE; i++) {
-    push_code(i, br.next_code());
-  }
+  std::array<len_t, ALPHABET_SIZE> lens{};
+  for (ind_t i = 0; i < ALPHABET_SIZE; i++)
+    lens[i] = br.next_len();
   br.set_rem();
+  for (ind_t i = 0; i < ALPHABET_SIZE; i++)
+    if (lens[i] > 0)
+      push_code(i, lens[i], br.next_code(lens[i]));
 }
 
 decode_huffman_tree::~decode_huffman_tree() {
   nodes.clear();
 }
 
-void decode_huffman_tree::push_code(char_t c, code_t const& p) {
-  if (p.second == 0)
-    return;
+void decode_huffman_tree::push_code(char_t c, len_t l, int_t ct) {
   ind_t tmp_node = 0;
   len_t used_bit = 0;
-  bool goto_right = (p.first >> (p.second - used_bit - 1)) & 1;
-  while (used_bit < p.second && !is_semi_leaf(tmp_node, goto_right)) {
+  bool goto_right = (ct >> (l - used_bit - 1)) & 1;
+  while (used_bit < l && !is_semi_leaf(tmp_node, goto_right)) {
     used_bit++;
     move(tmp_node, goto_right);
-    goto_right = (p.first >> (p.second - used_bit - 1)) & 1;
+    goto_right = (ct >> (l - used_bit - 1)) & 1;
   }
-  while (used_bit < p.second) {
+  while (used_bit < l) {
     used_bit++;
     (goto_right ? nodes[tmp_node].right : nodes[tmp_node].left) = nodes.size();
     nodes.emplace_back(nodes.size(), nodes.size());
     tmp_node = nodes.size() - 1;
-    goto_right = (p.first >> (p.second - used_bit - 1)) & 1;
+    goto_right = (ct >> (l - used_bit - 1)) & 1;
   }
   nodes.back().value = c;
 }

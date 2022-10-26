@@ -14,7 +14,8 @@ struct binary_reader {
   binary_reader& operator=(binary_reader const&) = delete;
   ~binary_reader();
 
-  code_t next_code();
+  len_t next_len();
+  int_t next_code(len_t);
   bool next_bool();
   bool eof() const;
   void set_rem();
