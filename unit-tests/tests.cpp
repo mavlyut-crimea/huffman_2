@@ -75,9 +75,9 @@ void htest(std::string const& input) {
   cat_file(enc);
   cat_file(dec);
 #endif
-  cat_file(in);
-  cat_file(enc);
-  cat_file(dec);
+//   cat_file(in);
+//   cat_file(enc);
+//   cat_file(dec);
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
 #ifndef LEAVE_FILES
   std::filesystem::remove(enc);
