@@ -8,7 +8,8 @@ static constexpr std::streamsize UNINITIALIZED = 0xded;
 
 binary_reader::binary_reader(std::istream& in)
     : tmp_char(0), pos(0), in(in), rem(-1)
-    , len(UNINITIALIZED), cnt(UNINITIALIZED), buf(BUFSIZE, 0), rdbuf(nullptr) {}
+    , len(UNINITIALIZED), cnt(UNINITIALIZED)
+    , buf(BUFSIZE, 0), rdbuf(nullptr) {}
 
 binary_reader::~binary_reader() {
   buf.clear();
@@ -30,7 +31,7 @@ bool binary_reader::next_bool() {
     tmp_char = buf[cnt++];
     check_buffer();
     pos = (len == 0 ? rem : BYTESIZE);
-   }
+  }
   bool ans = (tmp_char >> (--pos)) & 1;
   return ans;
 }

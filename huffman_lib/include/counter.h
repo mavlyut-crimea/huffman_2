@@ -6,6 +6,7 @@
 #define HUFFMAN_COUNTER_H
 
 #include "consts.h"
+#include <array>
 #include <string>
 
 struct counter {
@@ -17,7 +18,7 @@ struct counter {
   weight_t operator[](ind_t) const;
 
 private:
-  std::vector<weight_t> cnts;
+  std::array<weight_t, ALPHABET_SIZE> cnts{};
 };
 
 #endif // HUFFMAN_COUNTER_H

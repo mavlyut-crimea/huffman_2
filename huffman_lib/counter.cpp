@@ -6,11 +6,11 @@
 #include <array>
 #include <fstream>
 
-counter::counter() : cnts(ALPHABET_SIZE, 0) {}
-
-counter::~counter() {
-  cnts.clear();
+counter::counter() {
+  cnts.fill(0);
 }
+
+counter::~counter() = default;
 
 void counter::append(char x) {
   cnts[static_cast<char_t>(static_cast<int>(x) + ALPHABET_SIZE / 2)]++;

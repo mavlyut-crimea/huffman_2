@@ -37,7 +37,7 @@ struct encode_huffman_tree {
 private:
   void put_codes(ind_t, int_t, len_t);
 
-  std::vector<ind_t> char_to_ind;
+  std::array<ind_t, ALPHABET_SIZE + 1> char_to_ind{};
   std::vector<node> nodes;
   std::vector<code_t> codes;
 };
