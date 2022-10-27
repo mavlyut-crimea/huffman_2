@@ -13,12 +13,17 @@ binary_writer::~binary_writer() {
   flush();
 }
 
-binary_writer& binary_writer::write(int_t x) {
+void binary_writer::write(len_t l) {
+  out << l << ' ';
+}
+
+void binary_writer::write(ind_t x) {
   out << x << ' ';
-  return *this;
 }
 
 void binary_writer::write(code_t const& x) {
+  if (x.second == 0)
+    return;
   if (pos + x.second > BYTESIZE) {
     size_t i = x.second - BYTESIZE + pos;
     buf.push_back((tmp_char << (BYTESIZE - pos)) + (x.first >> i));
