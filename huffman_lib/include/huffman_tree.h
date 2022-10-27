@@ -28,19 +28,18 @@ private:
 };
 
 struct encode_huffman_tree {
-  explicit encode_huffman_tree(counter&);
+  explicit encode_huffman_tree(counter const&);
   ~encode_huffman_tree();
 
   code_t get_code(char) const;
-  friend binary_writer& write(binary_writer&, encode_huffman_tree const&
-      , std::array<weight_t, ALPHABET_SIZE> const&);
+  friend binary_writer& write(binary_writer&, encode_huffman_tree const&);
 
 private:
   void put_codes(ind_t, int_t, len_t);
 
-  std::array<ind_t, ALPHABET_SIZE + 1> char_to_ind{};
+  ind_t rem;
   std::vector<node> nodes;
-  std::vector<code_t> codes;
+  std::array<code_t, ALPHABET_SIZE> codes;
 };
 
 struct decode_huffman_tree {
@@ -55,7 +54,7 @@ private:
   std::vector<node> nodes;
 
   bool is_semi_leaf(ind_t, bool);
-  void push_code(char_t, len_t, int_t);
+  void push_code(char_t, code_t const&);
 };
 
 #endif // HUFFMAN_HUFFMAN_TREE_H
