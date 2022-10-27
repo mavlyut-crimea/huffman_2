@@ -8,25 +8,22 @@ static constexpr std::streamsize UNINITIALIZED = 0xded;
 
 binary_reader::binary_reader(std::istream& in)
     : tmp_char(0), pos(0), in(in), rem(-1)
-    , len(UNINITIALIZED), cnt(UNINITIALIZED)
-    , buf(BUFSIZE, 0), rdbuf(nullptr) {}
+    , len(UNINITIALIZED), cnt(UNINITIALIZED), buf(BUFSIZE, 0), rdbuf(nullptr) {}
 
 binary_reader::~binary_reader() {
   buf.clear();
 }
 
-len_t binary_reader::next_len() {
-  len_t l = 0;
-  if (!(in >> l))
-    throw std::runtime_error("Expected code");
-  return l;
-}
-
-int_t binary_reader::next_code(len_t l) {
+code_t binary_reader::next_code(len_t l) {
   int_t c = 0;
   for (len_t i = 0; i < l; i++)
     (c <<= 1) += next_bool();
-  return c;
+  return { c, l };
+}
+
+void binary_reader::next_len(len_t& l) {
+  if (!(in >> l))
+    throw std::runtime_error("Expected number");
 }
 
 bool binary_reader::next_bool() {
@@ -34,7 +31,7 @@ bool binary_reader::next_bool() {
     tmp_char = buf[cnt++];
     check_buffer();
     pos = (len == 0 ? rem : BYTESIZE);
-  }
+   }
   bool ans = (tmp_char >> (--pos)) & 1;
   return ans;
 }
