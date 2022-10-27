@@ -17,7 +17,7 @@ using weight_t = size_t;
 using ind_t = int16_t;
 constexpr size_t BYTESIZE = 8;
 constexpr size_t ALPHABET_SIZE = (1 << (sizeof(char_t) * BYTESIZE));
-constexpr size_t BUFSIZE = 8192;
+constexpr size_t BUFSIZE = 4096;
 constexpr size_t BYTEMASK = (1 << BYTESIZE) - 1;
 
 #endif // HUFFMAN_CONSTS_H
