@@ -14,7 +14,8 @@ struct binary_writer {
   binary_writer& operator=(binary_writer const&) = delete;
   ~binary_writer();
 
-  binary_writer& write(int_t);
+  void write(len_t);
+  void write(ind_t);
   void write(code_t const&);
   void flush();
 
