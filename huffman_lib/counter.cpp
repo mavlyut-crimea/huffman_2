@@ -29,10 +29,6 @@ void counter::read_from_file(char const* in) {
   fin.close();
 }
 
-std::array<weight_t, ALPHABET_SIZE> const& counter::get_array() const {
-  return cnts;
-}
-
 weight_t counter::operator[](ind_t x) const {
   return cnts[x];
 }
