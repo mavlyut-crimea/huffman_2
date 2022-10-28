@@ -8,14 +8,7 @@ find_package(GTest REQUIRED)
 # NOTE: huffman functional must be implemented as library and linked to the executables
 # NOTE: tool target name must be huffman-tool
 
-# TODO: remove headers from library
 add_library(huffman STATIC
-        huffman_lib/include/binary_reader.h
-        huffman_lib/include/binary_writer.h
-        huffman_lib/include/consts.h
-        huffman_lib/include/counter.h
-        huffman_lib/include/huffman.h
-        huffman_lib/include/huffman_tree.h
         huffman_lib/binary_reader.cpp
         huffman_lib/binary_writer.cpp
         huffman_lib/counter.cpp
@@ -23,15 +16,11 @@ add_library(huffman STATIC
         huffman_lib/huffman_tree.cpp
         )
 
-add_executable(tests
-        unit-tests/tests.cpp
-        )
+add_executable(tests unit-tests/tests.cpp)
 
-add_executable(huffman-tool
-        huffman-tool.cpp
-        )
+add_executable(huffman-tool huffman-tool.cpp)
 
-#add_definitions(-D_ENABLE_BIG_TESTS)
+add_definitions(-D_ENABLE_BIG_TESTS)
 
 # don't forget to use same flags at your library 
 if (NOT MSVC)
