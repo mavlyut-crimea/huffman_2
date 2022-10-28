@@ -1,59 +1,48 @@
 //
-// Created by mavlyut on 02/10/22.
+// Created by mavlyut on 01/10/22.
 //
 
-#include "include/binary_writer.h"
+#include "include/counter.h"
+#include <array>
+#include <fstream>
 
-binary_writer::binary_writer(std::ostream& out)
-    : tmp_char(0), pos(0), out(out) {}
-
-binary_writer::~binary_writer() {
-  if (pos != 0)
-    buf.push_back(tmp_char);
-  flush();
+counter::counter() : used(0) {
+  cnts.fill(0);
 }
 
-void binary_writer::write(code_t const& x) {
-  if (x.second == 0)
-    return;
-  if (pos + x.second > BYTESIZE) {
-    size_t i = x.second - BYTESIZE + pos;
-    buf.push_back((tmp_char << (BYTESIZE - pos)) + (x.first >> i));
-    while (i >= BYTESIZE) {
-      i -= BYTESIZE;
-      buf.push_back((x.first >> i) & BYTEMASK);
-    }
-    tmp_char = (((x.first << (BYTESIZE - i)) & BYTEMASK) >> (BYTESIZE - i));
-    pos = i;
-  } else {
-    (tmp_char <<= x.second) += x.first;
-    pos += x.second;
+counter::~counter() = default;
+
+void counter::append(char x) {
+  if (cnts[static_cast<char_t>(static_cast<int>(x) + ALPHABET_SIZE / 2)]++ == 0)
+    used++;
+}
+
+void counter::normalize() {
+  if (used < 2) {
+    cnts[0]++;
+    if (used < 1)
+      cnts[1]++;
   }
-  check();
 }
 
-void binary_writer::flush() {
-  out << buf;
-  buf.clear();
-}
-
-void binary_writer::check() {
-  if (pos == BYTESIZE) {
-    buf.push_back(tmp_char);
-    pos = 0;
+void counter::read_from_file(char const* in) {
+  std::ifstream fin(in, std::ifstream::in);
+  auto rdbuf = fin.rdbuf();
+  std::array<char, BUFSIZE> buf{};
+  std::streamsize sz = -1;
+  while (sz != 0) {
+    sz = rdbuf->sgetn(buf.data(), BUFSIZE);
+    for (size_t i = 0; i < sz; i++)
+      append(buf[i]);
   }
-  if (buf.size() > BUFSIZE)
-    flush();
+  fin.close();
+  normalize();
 }
 
-void binary_writer::write(char x) {
-  out << x;
+weight_t counter::get_truth_cnt(ind_t i) const {
+  return cnts[i] - (i == 0 && used < 2 || i == 1 && used < 1);
 }
 
-void binary_writer::write(ind_t x) {
-  out << x << ' ';
-}
-
-void binary_writer::write(size_t x) {
-  out << x << ' ';
+weight_t counter::operator[](ind_t x) const {
+  return cnts[x];
 }
