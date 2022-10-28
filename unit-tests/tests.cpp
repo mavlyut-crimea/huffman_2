@@ -13,14 +13,12 @@ void ASSERT_EQ_FILES(char const* in1, char const* in2) {
     fin1 >> tmp1;
     fin2 >> tmp2;
     if (tmp1 != tmp2)
-      std::cout << "At position "
-                << i << " found "
-                << tmp1 << " != "
-                << tmp2 << '\n';
+      std::cout << "At position " << i << " found " << tmp1 << " != " << tmp2 << '\n';
     i++;
     ASSERT_EQ(tmp1, tmp2);
   }
-  ASSERT_TRUE(fin1.eof() && fin2.eof());
+  ASSERT_TRUE(fin1.eof());
+  ASSERT_TRUE(fin2.eof());
   fin1.close();
   fin2.close();
 }
@@ -75,9 +73,6 @@ void htest(std::string const& input) {
   cat_file(enc);
   cat_file(dec);
 #endif
-//   cat_file(in);
-//   cat_file(enc);
-//   cat_file(dec);
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
 #ifndef LEAVE_FILES
   std::filesystem::remove(enc);
