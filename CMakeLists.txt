@@ -17,6 +17,7 @@ add_library(huffman STATIC
         )
 
 add_executable(tests unit-tests/tests.cpp)
+
 add_executable(huffman-tool huffman-tool.cpp)
 
 # don't forget to use same flags at your library 
@@ -36,6 +37,8 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
 target_link_libraries(tests GTest::gtest GTest::gtest_main)
