@@ -8,7 +8,17 @@ find_package(GTest REQUIRED)
 # NOTE: huffman functional must be implemented as library and linked to the executables
 # NOTE: tool target name must be huffman-tool
 
+add_library(huffman STATIC
+        huffman_lib/binary_reader.cpp
+        huffman_lib/binary_writer.cpp
+        huffman_lib/counter.cpp
+        huffman_lib/huffman.cpp
+        huffman_lib/huffman_tree.cpp
+        )
+
 add_executable(tests unit-tests/tests.cpp)
+
+add_executable(huffman-tool huffman-tool.cpp)
 
 # don't forget to use same flags at your library 
 if (NOT MSVC)
@@ -27,6 +37,10 @@ endif()
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   target_compile_options(tests PUBLIC -D_GLIBCXX_DEBUG)
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  add_definitions(-D_ENABLE_BIG_TESTS)
 endif()
 
 target_link_libraries(tests GTest::gtest GTest::gtest_main)
+target_link_libraries(tests huffman)
+target_link_libraries(huffman-tool huffman)
