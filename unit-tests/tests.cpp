@@ -50,6 +50,8 @@ THROW_DECODE_TEST(no_rem)
 
 THROW_DECODE_TEST(short_tree)
 
+THROW_DECODE_TEST(big_tree)
+
 // 0
 HTEST(empty)
 
