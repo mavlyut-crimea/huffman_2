@@ -40,7 +40,7 @@ void decode(char const* in, char const* out) {
   std::ofstream fout(out, std::ofstream::out);
   binary_reader br(fin);
   decode_huffman_tree tr(br);
-  ind_t tmp_node = 0;
+  ind_t tmp_node = tr.get_root();
   std::string buf(BUFSIZE, 0);
   size_t pos = 0;
   while (!br.eof()) {
@@ -52,7 +52,7 @@ void decode(char const* in, char const* out) {
         fout << buf;
         pos = 0;
       }
-      tmp_node = 0;
+      tmp_node = tr.get_root();
     }
   }
   for (size_t i = 0; i < pos; i++)
