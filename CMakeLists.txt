@@ -17,10 +17,7 @@ add_library(huffman STATIC
         )
 
 add_executable(tests unit-tests/tests.cpp)
-
 add_executable(huffman-tool huffman-tool.cpp)
-
-add_definitions(-D_ENABLE_BIG_TESTS)
 
 # don't forget to use same flags at your library 
 if (NOT MSVC)
