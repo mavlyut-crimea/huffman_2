@@ -1,8 +1,6 @@
 #include "../huffman_lib/include/consts.h"
 #include "../huffman_lib/include/huffman.h"
 #include "gtest/gtest.h"
-#include <ctime>
-#include <filesystem>
 #include <fstream>
 
 void ASSERT_EQ_FILES(char const* in1, char const* in2) {
@@ -38,46 +36,14 @@ void cat_file(std::string const& name) {
 
 template <bool change = true>
 void htest(std::string const& input) {
-#ifdef LOG
-  std::cout << path << "\n";
-  std::cout << input << "_Test\n";
-#endif
   std::string in = (change ? (path + "/files/") : "") + input;
   std::string enc = (change ? (path + "/") : "") + input + ".huf";
   std::string dec = (change ? (path + "/") : "") + input + "_decomp";
-#ifdef LOG
-  time_t t1 = std::time(nullptr);
-#endif
   encode(in.c_str(), enc.c_str());
-#ifdef LOG
-  time_t t2 = std::time(nullptr);
-#endif
   decode(enc.c_str(), dec.c_str());
-#ifdef LOG
-  time_t t3 = std::time(nullptr);
-  size_t s1 = std::filesystem::file_size(in);
-  size_t s2 = std::filesystem::file_size(enc);
-  size_t s3 = std::filesystem::file_size(dec);
-  ASSERT_TRUE(s2 > 0);
-  ASSERT_EQ(s1, s3);
-  double coef = static_cast<double>(s1) / static_cast<double>(s2);
-  std::cout << "Start size: " << s1
-            << ", encoded_file size: " << s2
-            << ", compression ratio: " << coef << "\n";
-  std::cout << "Encode time: " << t2 - t1 << "s\n";
-  std::cout << "Decode time: " << t3 - t2 << "s\n\n";
-  ASSERT_TRUE(coef > 0.8 || s2 <= s1 + 2004);
-#endif
-#ifdef LOG_CLANG_PROBLEM
-  cat_file(in);
-  cat_file(enc);
-  cat_file(dec);
-#endif
   ASSERT_EQ_FILES(in.c_str(), dec.c_str());
-#ifndef LEAVE_FILES
   std::filesystem::remove(enc);
   std::filesystem::remove(dec);
-#endif
 }
 
 #define HTEST(input) TEST(correctness, input) { htest(#input); }
