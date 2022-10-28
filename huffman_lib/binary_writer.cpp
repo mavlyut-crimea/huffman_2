@@ -13,14 +13,6 @@ binary_writer::~binary_writer() {
   flush();
 }
 
-void binary_writer::write(len_t l) {
-  out << l << ' ';
-}
-
-void binary_writer::write(ind_t x) {
-  out << x << ' ';
-}
-
 void binary_writer::write(code_t const& x) {
   if (x.second == 0)
     return;
@@ -52,4 +44,16 @@ void binary_writer::check() {
   }
   if (buf.size() > BUFSIZE)
     flush();
+}
+
+void binary_writer::write(char x) {
+  out << x;
+}
+
+void binary_writer::write(ind_t x) {
+  out << x << ' ';
+}
+
+void binary_writer::write(size_t x) {
+  out << x << ' ';
 }
