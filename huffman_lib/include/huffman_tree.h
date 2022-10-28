@@ -15,7 +15,7 @@ struct node {
   friend struct encode_huffman_tree;
   friend struct decode_huffman_tree;
 
-  node(char_t, ind_t);
+  explicit node(char_t = '$', ind_t = -1);
   node(ind_t, node const&, node const&);
   ~node();
 
@@ -36,6 +36,7 @@ struct encode_huffman_tree {
 
 private:
   void put_codes(ind_t, int_t, len_t);
+  void write(binary_writer&, node const&) const;
 
   ind_t rem;
   std::vector<node> nodes;
@@ -49,12 +50,13 @@ struct decode_huffman_tree {
   void move(ind_t&, bool);
   bool is_leaf(ind_t);
   char get_char(ind_t);
+  ind_t get_root() const;
 
 private:
+  ind_t root;
   std::vector<node> nodes;
 
-  bool is_semi_leaf(ind_t, bool);
-  void push_code(char_t, code_t const&);
+  ind_t read_node(std::string const&, ind_t&, ind_t, ind_t&, bool = false);
 };
 
 #endif // HUFFMAN_HUFFMAN_TREE_H
