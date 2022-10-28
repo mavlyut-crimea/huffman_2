@@ -41,9 +41,8 @@ struct parser_keys {
   }
 
   void push(char x) {
-    if (x == '\0' || flags.find(x) == flags.end()) {
+    if (x == '\0' || flags.find(x) == flags.end())
       throw unsupported_option_exception("-" + std::string(1, x));
-    }
     keys.insert(x);
     last_key = x;
   }
@@ -51,23 +50,19 @@ struct parser_keys {
   void push(std::string const& k) {
     if (k.substr(0, std::min<size_t>(2, k.length())) == "--") {
       char tmp = long_to_short(flags, k.substr(2));
-      if (tmp == '\0') {
+      if (tmp == '\0')
         throw unsupported_option_exception(k);
-      }
       return push(tmp);
     }
     if (k.substr(0, std::min<size_t>(1, k.length())) == "-") {
-      for (size_t i = 1; i < k.length(); i++) {
+      for (size_t i = 1; i < k.length(); i++)
         push(k[i]);
-      }
-      if (k.length() == 2) {
+      if (k.length() == 2)
         last_key = k[1];
-      }
       return;
     }
-    if (!last_key) {
+    if (!last_key)
       throw unsupported_option_exception(k);
-    }
     const_cast<std::string&>(keys.find(last_key)->arg) = k;
     last_key = '\0';
   }
@@ -75,28 +70,24 @@ struct parser_keys {
   char const* get_arg(char fl) const {
     if (exist(fl)) {
       std::string const& ans = keys.find(fl)->arg;
-      if (!ans.length()) {
+      if (!ans.length())
         throw expected_arg_exception(flags.at(fl));
-      }
       return ans.data();
     }
     throw expected_option_exception(flags.at(fl));
   }
 
   friend std::ostream& operator<<(std::ostream& out, parser_keys const& pk) {
-    for (key const& k : pk.keys) {
+    for (key const& k : pk.keys)
       out << k.flag << " " << k.arg << "\n";
-    }
     return out;
   }
 
 private:
   static char long_to_short(flags_container const& fl, std::string const& x) {
-    for (auto it = fl.begin(); it != fl.end(); it++) {
-      if (it->second == x) {
-        return it->first;
-      }
-    }
+    for (const auto& it : fl)
+      if (it.second == x)
+        return it.first;
     return '\0';
   }
 
@@ -126,11 +117,7 @@ static const std::map<char, std::string> flags = {
     { 'c', "compress" },
     { 'd', "decompress" },
     { 'i', "input" },
-    { 'o', "output" },
-    { 'i', "input" },
-    { 's', "ct=string" },
-    { 'I', "ct=vector_ints" },
-    { 'b', "ct=vector_bool" },
+    { 'o', "output" }
 };
 
 int main(int argc, char** argv) {
@@ -139,29 +126,23 @@ int main(int argc, char** argv) {
     pk.push(std::string(argv[i]));
   }
   if (pk.exist('h') || argc == 1) {
-    std::cout << "Usage: huffman-tool (-c [COMPRESS_MODE -S SMALL_SIZE] | -d) "
-              << "--input FILE_IN --output FILE_OUT\n"
+    std::cout << "Usage: huffman-tool (-c | -d) "
+              << "-i FILE_IN -o FILE_OUT\n"
               << "FLAGS:\n"
               << "\t-h, --help                more information\n"
               << "\t-c, --compress            encode file\n"
               << "\t-d, --decompress          decode file\n"
               << "\t-i, --input FILE_IN       input file\n"
               << "\t-o, --output FILE_OUT     output file\n"
-              << "\nMore information: https://github.com/mavlyut-crimea/huffman-mavlyut.\n"
-        ;
+              << "\nMore information: https://github.com/mavlyut-crimea/huffman-mavlyut.\n";
     return 0;
   }
   char const* in = pk.get_arg('i');
   char const* out = pk.get_arg('o');
-  if (pk.exist('c')) {
-    if (pk.exist('d')) {
-      throw unsupported_option_exception("-cd");
-    }
+  if (pk.exist('c') && pk.exist('d'))
+    throw unsupported_option_exception("-cd");
+  if (pk.exist('c'))
     encode(in, out);
-  } else if (pk.exist('d')) {
-    if (pk.exist('c')) {
-      throw unsupported_option_exception("-cd");
-    }
+  else if (pk.exist('d'))
     decode(in, out);
-  }
 }
