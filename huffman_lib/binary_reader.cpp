@@ -25,7 +25,7 @@ bool binary_reader::next_bool() {
 }
 
 bool binary_reader::eof() const {
-  return pos == 0 && len == 0;
+  return pos == 0 && len == 0 && in.eof();
 }
 
 void binary_reader::check_buffer() {
